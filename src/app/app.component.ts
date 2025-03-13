@@ -1,21 +1,47 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet, RouterLink } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { NgIf } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { NgIf, AsyncPipe } from '@angular/common';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, MatToolbarModule, MatButtonModule, NgIf],
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    NgIf,
+    AsyncPipe
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  isLoggedIn$: Observable<boolean>;
 
-  public constructor(private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-  public doLogout() {
-    localStorage.removeItem('active')
-    this.router.navigate(['/login'])
+  ngOnInit(): void {
+    this.isLoggedIn$ = new Observable<boolean>(observer => {
+      this.authService.currentUser$.subscribe(user => {
+        observer.next(!!user);
+      });
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 }
+

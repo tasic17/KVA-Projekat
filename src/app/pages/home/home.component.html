@@ -1,0 +1,58 @@
+<section class="hero">
+  <div class="hero-content">
+    <h1>Welcome to Cinema Ticket Box</h1>
+    <p>Your one-stop destination for movie tickets. Browse movies, check screening times, and book your tickets online.</p>
+    <div class="hero-buttons">
+      <a mat-raised-button color="primary" routerLink="/movies">Browse Movies</a>
+      <a mat-raised-button routerLink="/screenings">View Screenings</a>
+    </div>
+  </div>
+</section>
+
+<section class="featured-movies">
+  <h2>Featured Movies</h2>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="movie-grid">
+    <mat-card *ngFor="let movie of featuredMovies" class="movie-card">
+      <img mat-card-image [src]="movie.coverUrl || 'assets/images/movie-placeholder.jpg'" [alt]="movie.title" class="movie-poster">
+      <mat-card-content>
+        <h3>{{ movie.title }}</h3>
+        <p class="movie-genres">{{ movie.genres?.map(g => g.name).join(', ') }}</p>
+        <p class="movie-description">{{ movie.description | slice:0:120 }}{{ movie.description.length > 120 ? '...' : '' }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/movies', movie.id]">View Details</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div class="view-all-link">
+    <a mat-button color="primary" routerLink="/movies">
+      View All Movies <mat-icon>arrow_forward</mat-icon>
+    </a>
+  </div>
+</section>
+
+<section class="info-section">
+  <div class="info-card">
+    <mat-icon>local_movies</mat-icon>
+    <h3>Latest Movies</h3>
+    <p>Browse our collection of the latest blockbusters and indie favorites.</p>
+  </div>
+
+  <div class="info-card">
+    <mat-icon>event_seat</mat-icon>
+    <h3>Easy Booking</h3>
+    <p>Reserve your tickets online and skip the line at the cinema.</p>
+  </div>
+
+  <div class="info-card">
+    <mat-icon>star</mat-icon>
+    <h3>Rate & Review</h3>
+    <p>Share your thoughts on the movies you've watched with other cinephiles.</p>
+  </div>
+</section>

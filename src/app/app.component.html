@@ -1,1 +1,24 @@
-<router-outlet />
+<mat-toolbar color="primary">
+  <span routerLink="/" class="cursor-pointer">Cinema Ticket Box</span>
+  <span class="spacer"></span>
+  <div class="nav-links">
+    <a mat-button routerLink="/movies">Movies</a>
+    <a mat-button routerLink="/screenings">Screenings</a>
+    <ng-container *ngIf="isLoggedIn$ | async; else loginButtons">
+      <a mat-button routerLink="/cart">
+        <mat-icon>shopping_cart</mat-icon> Cart
+      </a>
+      <a mat-button routerLink="/my-reservations">My Reservations</a>
+      <a mat-button routerLink="/profile">Profile</a>
+      <button mat-button (click)="logout()">Logout</button>
+    </ng-container>
+    <ng-template #loginButtons>
+      <a mat-button routerLink="/login">Login</a>
+      <a mat-button routerLink="/register">Register</a>
+    </ng-template>
+  </div>
+</mat-toolbar>
+
+<div class="main-content-container">
+  <router-outlet></router-outlet>
+</div>

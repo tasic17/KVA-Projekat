@@ -1,0 +1,142 @@
+<div class="movie-detail-container">
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && !movie" class="not-found">
+    <h2>Movie not found</h2>
+    <p>The movie you're looking for doesn't exist or has been removed.</p>
+    <a mat-raised-button color="primary" routerLink="/movies">Back to Movies</a>
+  </div>
+
+  <div *ngIf="!loading && movie" class="movie-content">
+    <div class="movie-header">
+      <div class="movie-poster-container">
+        <img [src]="movie.coverUrl || 'assets/images/movie-placeholder.jpg'" [alt]="movie.title" class="movie-poster">
+      </div>
+
+      <div class="movie-info">
+        <h1>{{ movie.title }}</h1>
+
+        <div class="movie-meta">
+          <div class="movie-rating" *ngIf="averageRating > 0">
+            <span class="rating-value">{{ averageRating.toFixed(1) }}</span>
+            <div class="rating-stars">
+              <mat-icon *ngFor="let star of getRatingStars(averageRating)">{{ star }}</mat-icon>
+            </div>
+            <span class="rating-count">({{ reviews.length }} reviews)</span>
+          </div>
+
+          <div class="movie-runtime" *ngIf="movie.runtime">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ movie.runtime }} minutes</span>
+          </div>
+
+          <div class="movie-release" *ngIf="movie.releaseDate">
+            <mat-icon>event</mat-icon>
+            <span>{{ getFormattedDate(movie.releaseDate) }}</span>
+          </div>
+        </div>
+
+        <div class="movie-genres" *ngIf="movie.genres?.length">
+          <mat-chip-set>
+            <mat-chip *ngFor="let genre of movie.genres">{{ genre.name }}</mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <div class="movie-description">
+          <p>{{ movie.description }}</p>
+        </div>
+
+        <div class="movie-crew">
+          <div class="directors" *ngIf="movie.directors?.length">
+            <h3>Director{{ movie.directors.length > 1 ? 's' : '' }}</h3>
+            <p>{{ movie.directors.map(d => d.name).join(', ') }}</p>
+          </div>
+
+          <div class="cast" *ngIf="movie.actors?.length">
+            <h3>Cast</h3>
+            <p>{{ movie.actors.map(a => a.name).join(', ') }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <mat-tab-group class="movie-details-tabs">
+      <mat-tab label="Screenings">
+        <div class="tab-content">
+          <div *ngIf="screenings.length === 0" class="no-screenings">
+            <p>No upcoming screenings available for this movie.</p>
+          </div>
+
+          <div *ngIf="screenings.length > 0" class="screenings-list">
+            <div *ngFor="let screening of screenings" class="screening-item">
+              <div class="screening-info">
+                <div class="screening-date">
+                  <div class="date-day">{{ new Date(screening.date).toLocaleDateString('en-US', {weekday: 'short'}) }}</div>
+                  <div class="date-full">{{ new Date(screening.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric'}) }}</div>
+                </div>
+
+                <div class="screening-time">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ screening.time }}</span>
+                </div>
+
+                <div class="screening-hall">
+                  <mat-icon>chair</mat-icon>
+                  <span>{{ screening.hall }}</span>
+                </div>
+
+                <div class="screening-seats" [ngClass]="{'low-seats': screening.availableSeats < 10}">
+                  <mat-icon>event_seat</mat-icon>
+                  <span>{{ screening.availableSeats }} seats available</span>
+                </div>
+
+                <div class="screening-price">
+                  <span>{{ screening.price }} RSD</span>
+                </div>
+              </div>
+
+              <div class="screening-actions">
+                <button mat-raised-button color="accent" (click)="addToCart(screening)" [disabled]="screening.availableSeats === 0">
+                  Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Reviews">
+        <div class="tab-content">
+          <div *ngIf="reviews.length === 0" class="no-reviews">
+            <p>No reviews yet. Be the first to watch and review this movie!</p>
+          </div>
+
+          <div *ngIf="reviews.length > 0" class="reviews-list">
+            <div *ngFor="let review of reviews" class="review-item">
+              <div class="review-header">
+                <div class="review-author">
+                  <mat-icon>account_circle</mat-icon>
+                  <span>{{ review.userName }}</span>
+                </div>
+
+                <div class="review-rating">
+                  <mat-icon *ngFor="let star of getRatingStars(review.rating)">{{ star }}</mat-icon>
+                </div>
+
+                <div class="review-date">
+                  {{ new Date(review.date).toLocaleDateString() }}
+                </div>
+              </div>
+
+              <div class="review-content">
+                <p>{{ review.comment }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

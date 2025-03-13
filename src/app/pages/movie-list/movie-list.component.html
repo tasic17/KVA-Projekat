@@ -1,0 +1,88 @@
+<div class="movie-list-container">
+  <h1>Movies</h1>
+
+  <div class="filters-container">
+    <div class="search-input">
+      <mat-form-field appearance="outline">
+        <mat-label>Search Movies</mat-label>
+        <input matInput [(ngModel)]="searchTerm" placeholder="Search by title, description...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="filter-dropdowns">
+      <mat-form-field appearance="outline">
+        <mat-label>Genre</mat-label>
+        <mat-select [(ngModel)]="selectedGenre">
+          <mat-option [value]="null">All Genres</mat-option>
+          <mat-option *ngFor="let genre of genres" [value]="genre.id">{{ genre.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Actor</mat-label>
+        <mat-select [(ngModel)]="selectedActor">
+          <mat-option [value]="null">All Actors</mat-option>
+          <mat-option *ngFor="let actor of actors" [value]="actor.id">{{ actor.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Director</mat-label>
+        <mat-select [(ngModel)]="selectedDirector">
+          <mat-option [value]="null">All Directors</mat-option>
+          <mat-option *ngFor="let director of directors" [value]="director.id">{{ director.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Runtime</mat-label>
+        <mat-select [(ngModel)]="selectedRuntime">
+          <mat-option [value]="null">All Runtimes</mat-option>
+          <mat-option *ngFor="let runtime of runtimes" [value]="runtime">{{ runtime }} min</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="filter-actions">
+      <button mat-raised-button color="primary" (click)="applyFilters()">
+        Apply Filters
+      </button>
+      <button mat-button (click)="resetFilters()">
+        Reset Filters
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && filteredMovies.length === 0" class="no-results">
+    <p>No movies found matching your criteria. Try adjusting your filters.</p>
+  </div>
+
+  <div *ngIf="!loading && filteredMovies.length > 0" class="movie-grid">
+    <mat-card *ngFor="let movie of filteredMovies" class="movie-card">
+      <img mat-card-image [src]="movie.coverUrl || 'assets/images/movie-placeholder.jpg'" [alt]="movie.title" class="movie-poster">
+      <mat-card-content>
+        <h3>{{ movie.title }}</h3>
+
+        <div class="movie-meta">
+          <mat-chip-set>
+            <mat-chip *ngFor="let genre of movie.genres?.slice(0, 2)">{{ genre.name }}</mat-chip>
+          </mat-chip-set>
+          <span class="movie-runtime" *ngIf="movie.runtime">{{ movie.runtime }} min</span>
+        </div>
+
+        <div class="movie-details">
+          <p *ngIf="movie.directors?.length"><strong>Director:</strong> {{ getDirectorNames(movie.directors) }}</p>
+          <p class="movie-description">{{ movie.description | slice:0:120 }}{{ movie.description.length > 120 ? '...' : '' }}</p>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/movies', movie.id]">View Details</a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
