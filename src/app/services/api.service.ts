@@ -7,7 +7,7 @@ import { Genre } from '../models/genre.model';
 import { Actor } from '../models/actor.model';
 import { Director } from '../models/director.model';
 
-// Interfejsi za API modele
+// Interfaces for API models
 interface ApiGenre {
   genreId: number;
   name: string;
@@ -27,11 +27,11 @@ interface ApiMovie {
   movieId: number;
   title: string;
   description: string;
+  shortDescription?: string;
   shortUrl: string;
   startDate: string;
   poster: string;
   runTime: number;
-  directorId: number;
   director: ApiDirector;
   movieActors: {
     actor: ApiActor
@@ -51,10 +51,10 @@ export class ApiService {
 
   // Movie endpoints
   getMovies(search?: string, actor?: number, genre?: number, director?: number, runtime?: number): Observable<Movie[]> {
-    // Konstruisanje URL-a sa parametrima
+    // Construct URL with parameters
     let url = `${this.baseUrl}/movie`;
 
-    // Dodajemo parametre u URL
+    // Add parameters to URL
     const params: string[] = [];
     if (search) params.push(`search=${search}`);
     if (actor) params.push(`actor=${actor}`);
@@ -66,7 +66,7 @@ export class ApiService {
       url += `?${params.join('&')}`;
     }
 
-    // Izvršavamo HTTP zahtev ka API-ju
+    // Execute HTTP request to the API
     return this.http.get<ApiMovie[]>(url).pipe(
       map(movies => movies.map(movie => this.mapApiMovieToModel(movie))),
       catchError(error => {
@@ -77,8 +77,12 @@ export class ApiService {
   }
 
   getMovieById(id: number): Observable<Movie | null> {
+    console.log(`Fetching movie with ID ${id} from API`);
     return this.http.get<ApiMovie>(`${this.baseUrl}/movie/${id}`).pipe(
-      map(movie => this.mapApiMovieToModel(movie)),
+      map(movie => {
+        console.log('Raw API movie data:', movie);
+        return this.mapApiMovieToModel(movie);
+      }),
       catchError(error => {
         console.error(`Error fetching movie with id ${id}:`, error);
         return of(null);
@@ -199,16 +203,17 @@ export class ApiService {
     );
   }
 
-  // Helper metoda koja konvertuje API model filma u model aplikacije
+  // Helper method that converts API movie model to application model
   private mapApiMovieToModel(apiMovie: ApiMovie): Movie {
+    // Ensure all properties are correctly mapped from API response to your application model
     return {
       id: apiMovie.movieId,
       title: apiMovie.title,
-      description: apiMovie.description,
-      shortUrl: apiMovie.shortUrl,
-      releaseDate: apiMovie.startDate,
-      coverUrl: apiMovie.poster,
-      runtime: apiMovie.runTime,
+      description: apiMovie.description || '',
+      shortUrl: apiMovie.shortUrl || '',
+      releaseDate: apiMovie.startDate || '',
+      coverUrl: apiMovie.poster || '',
+      runtime: apiMovie.runTime || 0,
       genres: apiMovie.movieGenres?.map((mg: { genre: ApiGenre }) => ({
         id: mg.genre.genreId,
         name: mg.genre.name
@@ -219,14 +224,12 @@ export class ApiService {
         biography: undefined,
         imageUrl: undefined
       })) || [],
-      directors: [
-        {
-          id: apiMovie.director.directorId,
-          name: apiMovie.director.name,
-          biography: undefined,
-          imageUrl: undefined
-        }
-      ]
+      directors: apiMovie.director ? [{
+        id: apiMovie.director.directorId,
+        name: apiMovie.director.name,
+        biography: undefined,
+        imageUrl: undefined
+      }] : []
     };
   }
 }

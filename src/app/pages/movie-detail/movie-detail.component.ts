@@ -59,6 +59,7 @@ export class MovieDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Check login status
     this.authService.currentUser$.subscribe(user => {
       this.isLoggedIn = !!user;
     });
@@ -66,21 +67,27 @@ export class MovieDetailComponent implements OnInit {
     this.route.paramMap.pipe(
       switchMap(params => {
         const movieId = Number(params.get('id'));
+        console.log('Fetching movie with ID:', movieId);
+
         if (isNaN(movieId)) {
+          console.error('Invalid movie ID:', params.get('id'));
           this.error = true;
           this.loading = false;
           return of(null);
         }
 
-        // Dodajem catchError da se rukuje sa mogućim API greškama
+        // Add better error handling and debugging
         return this.apiService.getMovieById(movieId).pipe(
+          tap(movie => console.log('API movie response:', movie)),
           catchError(err => {
             console.error('Error fetching movie:', err);
             this.error = true;
+            this.loading = false;
             return of(null);
           }),
           switchMap(movie => {
             if (!movie) {
+              console.warn('No movie found or error occurred');
               this.error = true;
               this.loading = false;
               return of(null);
@@ -89,18 +96,21 @@ export class MovieDetailComponent implements OnInit {
             return forkJoin({
               movie: of(movie),
               screenings: this.screeningService.getScreeningsByMovieId(movieId).pipe(
+                tap(screenings => console.log('Screenings loaded:', screenings.length)),
                 catchError(err => {
                   console.error('Error fetching screenings:', err);
                   return of([]);
                 })
               ),
               reviews: this.reservationService.getMovieReviews(movieId).pipe(
+                tap(reviews => console.log('Reviews loaded:', reviews.length)),
                 catchError(err => {
                   console.error('Error fetching reviews:', err);
                   return of([]);
                 })
               ),
               averageRating: this.reservationService.getAverageRating(movieId).pipe(
+                tap(rating => console.log('Average rating:', rating)),
                 catchError(err => {
                   console.error('Error fetching average rating:', err);
                   return of(0);
@@ -112,12 +122,18 @@ export class MovieDetailComponent implements OnInit {
       })
     ).subscribe(
       result => {
+        console.log('Final result processed:', result);
         if (result) {
           this.movie = result.movie;
           this.screenings = result.screenings;
           this.reviews = result.reviews;
           this.averageRating = result.averageRating;
         }
+        this.loading = false;
+      },
+      error => {
+        console.error('Subscription error:', error);
+        this.error = true;
         this.loading = false;
       }
     );
@@ -134,10 +150,8 @@ export class MovieDetailComponent implements OnInit {
     this.reservationService.addToCart(screening.id).subscribe({
       next: (cart) => {
         if (cart) {
-          // Show success message
           alert('Added to cart successfully!');
         } else {
-          // Show error message
           alert('Failed to add to cart. Please try again.');
         }
       },
@@ -175,6 +189,7 @@ export class MovieDetailComponent implements OnInit {
     }
     return this.movie.directors.map(d => d.name).join(', ');
   }
+
   getActorNames(): string {
     if (!this.movie?.actors || this.movie.actors.length === 0) {
       return '';
