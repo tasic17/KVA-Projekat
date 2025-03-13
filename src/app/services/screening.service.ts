@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Screening } from '../models/screening.model';
 import { ApiService } from './api.service';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +42,8 @@ export class ScreeningService {
 
         this.screenings = [];
 
-        movies.slice(0, 15).forEach(movie => {
+        // Koristimo sve filmove koje dobijemo sa API-ja
+        movies.forEach(movie => {
           // Create 3-5 screenings per movie across different days and times
           const numScreenings = Math.floor(Math.random() * 3) + 3; // 3-5 screenings
 
@@ -86,8 +87,14 @@ export class ScreeningService {
         });
 
         this.screeningsSubject.next(this.screenings);
+      }),
+      catchError(error => {
+        console.error('Error initializing screenings:', error);
+        return of([]); // Return empty array in case of error
       })
-    ).subscribe();
+    ).subscribe({
+      error: (error) => console.error('Error in screening initialization:', error)
+    });
   }
 
   getScreenings(
