@@ -11,7 +11,7 @@ import { Director } from '../models/director.model';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'https://movie.pequla.com/api';
+  private baseUrl = 'https://movie.pequla.com/api/movie?director=&actor=&search=&genre=';
 
   constructor(private http: HttpClient) { }
 
