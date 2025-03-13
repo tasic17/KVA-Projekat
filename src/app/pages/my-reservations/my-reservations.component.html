@@ -1,0 +1,208 @@
+<div class="reservations-container">
+  <h1>My Reservations</h1>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="reservations.length === 0" class="empty-reservations">
+      <mat-card>
+        <mat-card-content>
+          <div class="empty-content">
+            <mat-icon>movie</mat-icon>
+            <h2>No reservations yet</h2>
+            <p>You haven't made any movie reservations. Start by browsing our movie collection!</p>
+            <a mat-raised-button color="primary" routerLink="/movies">Browse Movies</a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div *ngIf="reservations.length > 0" class="reservations-content">
+      <mat-tab-group>
+        <mat-tab label="Upcoming">
+          <div class="tab-content">
+            <div *ngIf="upcomingReservations.length === 0" class="no-reservations">
+              <p>You don't have any upcoming reservations.</p>
+            </div>
+
+            <div *ngIf="upcomingReservations.length > 0" class="reservations-list">
+              <mat-card *ngFor="let reservation of upcomingReservations" class="reservation-card">
+                <div class="reservation-content">
+                  <div class="movie-poster"
+                       [style.background-image]="'url(' + (reservation.screening?.movie?.coverUrl || 'assets/images/movie-placeholder.jpg') + ')'">
+                  </div>
+
+                  <div class="reservation-details">
+                    <h3>{{ reservation.screening?.movie?.title }}</h3>
+
+                    <div class="screening-info">
+                      <div class="info-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>{{ formatDate(reservation.screening?.date) }}</span>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>schedule</mat-icon>
+                        <span>{{ reservation.screening?.time }}</span>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>meeting_room</mat-icon>
+                        <span>{{ reservation.screening?.hall }}</span>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>confirmation_number</mat-icon>
+                        <span>Reservation #{{ reservation.id }}</span>
+                      </div>
+                    </div>
+
+                    <div class="reservation-meta">
+                      <div class="reservation-status">
+                        <span class="status-badge reserved">Reserved</span>
+                        <span class="reservation-date">Reserved on {{ formatDate(reservation.reservationDate) }}</span>
+                      </div>
+
+                      <div class="ticket-price">
+                        <span>{{ reservation.screening?.price }} RSD</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="reservation-actions">
+                    <a mat-button [routerLink]="['/movies', reservation.screening?.movieId]">
+                      Movie Details
+                    </a>
+                    <button mat-raised-button color="warn" (click)="cancelReservation(reservation.id)">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Watched">
+          <div class="tab-content">
+            <div *ngIf="watchedReservations.length === 0" class="no-reservations">
+              <p>You don't have any watched movies.</p>
+            </div>
+
+            <div *ngIf="watchedReservations.length > 0" class="reservations-list">
+              <mat-card *ngFor="let reservation of watchedReservations" class="reservation-card">
+                <div class="reservation-content">
+                  <div class="movie-poster"
+                       [style.background-image]="'url(' + (reservation.screening?.movie?.coverUrl || 'assets/images/movie-placeholder.jpg') + ')'">
+                  </div>
+
+                  <div class="reservation-details">
+                    <h3>{{ reservation.screening?.movie?.title }}</h3>
+
+                    <div class="screening-info">
+                      <div class="info-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>{{ formatDate(reservation.screening?.date) }}</span>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>schedule</mat-icon>
+                        <span>{{ reservation.screening?.time }}</span>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>meeting_room</mat-icon>
+                        <span>{{ reservation.screening?.hall }}</span>
+                      </div>
+                    </div>
+
+                    <div class="reservation-meta">
+                      <div class="reservation-status">
+                        <span class="status-badge watched">Watched</span>
+                      </div>
+
+                      <div class="rating-display" *ngIf="reservation.rating">
+                        <div class="rating-stars">
+                          <mat-icon *ngFor="let star of getStarIcons(reservation.rating)">{{ star }}</mat-icon>
+                        </div>
+                        <span *ngIf="reservation.reviewText" class="review-text">
+                          "{{ reservation.reviewText }}"
+                        </span>
+                      </div>
+
+                      <div *ngIf="!reservation.rating" class="rate-now">
+                        <button mat-button color="primary" (click)="openRatingDialog(reservation)">
+                          Rate Now
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="reservation-actions">
+                    <a mat-button [routerLink]="['/movies', reservation.screening?.movieId]">
+                      Movie Details
+                    </a>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab label="Canceled">
+          <div class="tab-content">
+            <div *ngIf="canceledReservations.length === 0" class="no-reservations">
+              <p>You don't have any canceled reservations.</p>
+            </div>
+
+            <div *ngIf="canceledReservations.length > 0" class="reservations-list">
+              <mat-card *ngFor="let reservation of canceledReservations" class="reservation-card">
+                <div class="reservation-content">
+                  <div class="movie-poster faded"
+                       [style.background-image]="'url(' + (reservation.screening?.movie?.coverUrl || 'assets/images/movie-placeholder.jpg') + ')'">
+                  </div>
+
+                  <div class="reservation-details">
+                    <h3>{{ reservation.screening?.movie?.title }}</h3>
+
+                    <div class="screening-info">
+                      <div class="info-item">
+                        <mat-icon>calendar_today</mat-icon>
+                        <span>{{ formatDate(reservation.screening?.date) }}</span>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>schedule</mat-icon>
+                        <span>{{ reservation.screening?.time }}</span>
+                      </div>
+
+                      <div class="info-item">
+                        <mat-icon>meeting_room</mat-icon>
+                        <span>{{ reservation.screening?.hall }}</span>
+                      </div>
+                    </div>
+
+                    <div class="reservation-meta">
+                      <div class="reservation-status">
+                        <span class="status-badge canceled">Canceled</span>
+                        <span class="reservation-date">Reserved on {{ formatDate(reservation.reservationDate) }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="reservation-actions">
+                    <a mat-button [routerLink]="['/movies', reservation.screening?.movieId]">
+                      Movie Details
+                    </a>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </ng-container>
+</div>

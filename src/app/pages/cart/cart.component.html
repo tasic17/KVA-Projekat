@@ -1,0 +1,93 @@
+<div class="cart-container">
+  <h1>My Cart</h1>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="cart?.reservations?.length === 0" class="empty-cart">
+      <mat-card>
+        <mat-card-content>
+          <div class="empty-cart-content">
+            <mat-icon>shopping_cart</mat-icon>
+            <h2>Your cart is empty</h2>
+            <p>Find some great movies to watch and add them to your cart!</p>
+            <a mat-raised-button color="primary" routerLink="/movies">Browse Movies</a>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div *ngIf="cart?.reservations?.length > 0" class="cart-content">
+      <div class="cart-items">
+        <mat-card *ngFor="let reservation of cart.reservations" class="cart-item">
+          <div class="item-content">
+            <div class="item-image"
+                 [style.background-image]="'url(' + (reservation.screening?.movie?.coverUrl || 'assets/images/movie-placeholder.jpg') + ')'">
+            </div>
+
+            <div class="item-details">
+              <h3>{{ reservation.screening?.movie?.title }}</h3>
+
+              <div class="item-meta">
+                <div class="screening-info">
+                  <div class="info-item">
+                    <mat-icon>calendar_today</mat-icon>
+                    <span>{{ formatDate(reservation.screening?.date) }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <mat-icon>schedule</mat-icon>
+                    <span>{{ reservation.screening?.time }}</span>
+                  </div>
+
+                  <div class="info-item">
+                    <mat-icon>meeting_room</mat-icon>
+                    <span>{{ reservation.screening?.hall }}</span>
+                  </div>
+                </div>
+
+                <div class="item-price">
+                  <span>{{ reservation.screening?.price }} RSD</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="item-actions">
+              <button mat-icon-button color="warn" (click)="removeItem(reservation.id)"
+                      matTooltip="Remove from cart">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+
+      <mat-card class="cart-summary">
+        <mat-card-content>
+          <h2>Order Summary</h2>
+
+          <div class="summary-row">
+            <span>Tickets ({{ cart.reservations.length }})</span>
+            <span>{{ cart.totalPrice }} RSD</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>{{ cart.totalPrice }} RSD</span>
+          </div>
+
+          <div class="checkout-actions">
+            <button mat-stroked-button routerLink="/screenings">
+              Continue Shopping
+            </button>
+            <button mat-raised-button color="primary" (click)="checkout()">
+              Complete Purchase
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-container>
+</div>

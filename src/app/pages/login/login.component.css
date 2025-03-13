@@ -1,0 +1,55 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 150px);
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+mat-card-header {
+  margin-bottom: 16px;
+}
+
+.form-field {
+  margin-bottom: 16px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 16px;
+}
+
+.form-actions button {
+  width: 100%;
+  padding: 8px 0;
+}
+
+.register-link {
+  text-align: center;
+  margin: 16px 0 8px;
+  font-size: 0.9rem;
+}
+
+mat-spinner {
+  display: inline-block;
+  margin-right: 8px;
+}

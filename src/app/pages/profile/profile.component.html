@@ -1,0 +1,144 @@
+<div class="profile-container">
+  <h1>My Profile</h1>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading" class="profile-content">
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-field">
+              <mat-form-field appearance="outline">
+                <mat-label>First Name</mat-label>
+                <input matInput type="text" formControlName="firstName">
+                <mat-error *ngIf="profileForm.get('firstName')?.hasError('required')">
+                  First name is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-field">
+              <mat-form-field appearance="outline">
+                <mat-label>Last Name</mat-label>
+                <input matInput type="text" formControlName="lastName">
+                <mat-error *ngIf="profileForm.get('lastName')?.hasError('required')">
+                  Last name is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email">
+              <mat-error *ngIf="profileForm.get('email')?.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="profileForm.get('email')?.hasError('email')">
+                Please enter a valid email address
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Phone Number</mat-label>
+              <input matInput type="tel" formControlName="phone">
+              <mat-error *ngIf="profileForm.get('phone')?.hasError('required')">
+                Phone number is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Address</mat-label>
+              <input matInput type="text" formControlName="address">
+              <mat-error *ngIf="profileForm.get('address')?.hasError('required')">
+                Address is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Favorite Movie Genres</mat-label>
+              <mat-select formControlName="favoriteGenres" multiple>
+                <mat-option *ngFor="let genre of genres" [value]="genre">
+                  {{ genre.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="form-divider">
+            <mat-divider></mat-divider>
+            <span>Change Password (optional)</span>
+          </div>
+
+          <div class="form-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Current Password</mat-label>
+              <input matInput [type]="hideCurrentPassword ? 'password' : 'text'" formControlName="currentPassword">
+              <button type="button" mat-icon-button matSuffix
+                      (click)="hideCurrentPassword = !hideCurrentPassword" tabindex="-1">
+                <mat-icon>{{ hideCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="form-field">
+            <mat-form-field appearance="outline">
+              <mat-label>New Password</mat-label>
+              <input matInput [type]="hideNewPassword ? 'password' : 'text'" formControlName="newPassword">
+              <button type="button" mat-icon-button matSuffix
+                      (click)="hideNewPassword = !hideNewPassword" tabindex="-1">
+                <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="profileForm.get('newPassword')?.hasError('minlength')">
+                Password must be at least 6 characters
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-field">
+            <mat-form-field appearance="outline">
+              <mat-label>Confirm New Password</mat-label>
+              <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword">
+              <button type="button" mat-icon-button matSuffix
+                      (click)="hideConfirmPassword = !hideConfirmPassword" tabindex="-1">
+                <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="profileForm.hasError('passwordMismatch')">
+                Passwords do not match
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
+          <div *ngIf="successMessage" class="success-message">
+            {{ successMessage }}
+          </div>
+
+          <div class="form-actions">
+            <button mat-button routerLink="/my-reservations">
+              My Reservations
+            </button>
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="profileForm.invalid || isLoading">
+              <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+              <span *ngIf="!isLoading">Save Changes</span>
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

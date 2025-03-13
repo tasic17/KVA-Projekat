@@ -1,0 +1,106 @@
+.screening-list-container {
+  padding: 20px;
+}
+
+h1 {
+  margin-bottom: 24px;
+}
+
+.filters-section {
+  margin-bottom: 30px;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filter-row:last-child {
+  margin-bottom: 0;
+}
+
+.date-filter, .movie-filter, .price-filter {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.screenings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.screening-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-avatar {
+  background-size: cover;
+  background-position: center;
+}
+
+.screening-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.screening-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.screening-detail.price {
+  font-weight: bold;
+}
+
+.low-seats {
+  color: #f44336;
+}
+
+.movie-genres {
+  margin: 16px 0 8px 0;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px 16px !important;
+  margin-top: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
+
+  .filter-actions {
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}

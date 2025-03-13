@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Rate Movie: {{ data.movie.title }}</h2>
+
+<mat-dialog-content>
+  <div class="rating-content">
+    <div class="movie-info">
+      <img [src]="data.movie.coverUrl || 'assets/images/movie-placeholder.jpg'"
+           [alt]="data.movie.title" class="movie-thumbnail">
+      <div>
+        <div class="screening-detail">
+          <mat-icon>calendar_today</mat-icon>
+          <span>{{ formatDate(data.screening.date) }}</span>
+        </div>
+        <div class="screening-detail">
+          <mat-icon>schedule</mat-icon>
+          <span>{{ data.screening.time }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rating-selection">
+      <p>Your Rating:</p>
+      <div class="rating-stars">
+        <button mat-icon-button *ngFor="let star of [1, 2, 3, 4, 5]"
+                (click)="setRating(star)" [color]="rating >= star ? 'accent' : ''">
+          <mat-icon>{{ rating >= star ? 'star' : 'star_border' }}</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <mat-form-field appearance="outline" class="review-input">
+      <mat-label>Your Review (Optional)</mat-label>
+      <textarea matInput [(ngModel)]="reviewText" rows="4"
+                placeholder="Share your thoughts about the movie..."></textarea>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary"
+          [disabled]="rating === 0"
+          [mat-dialog-close]="{ rating: rating, reviewText: reviewText }">
+    Submit Rating
+  </button>
+</mat-dialog-actions>

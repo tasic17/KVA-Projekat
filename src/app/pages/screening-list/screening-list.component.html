@@ -1,0 +1,114 @@
+<div class="screening-list-container">
+  <h1>Movie Screenings</h1>
+
+  <div class="filters-section">
+    <mat-card>
+      <mat-card-content>
+        <div class="filter-row">
+          <mat-form-field appearance="outline" class="date-filter">
+            <mat-label>Select Date</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChanged()">
+            <mat-hint>Filter screenings by date</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="movie-filter">
+            <mat-label>Select Movie</mat-label>
+            <mat-select [(ngModel)]="selectedMovieId" (selectionChange)="applyFilters()">
+              <mat-option [value]="null">All Movies</mat-option>
+              <mat-option *ngFor="let movie of movies" [value]="movie.id">
+                {{ movie.title }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-row">
+          <mat-form-field appearance="outline" class="price-filter">
+            <mat-label>Price Range</mat-label>
+            <mat-select [(ngModel)]="priceRange" (selectionChange)="applyFilters()">
+              <mat-option [value]="null">Any Price</mat-option>
+              <mat-option value="low">Economy (< 450 RSD)</mat-option>
+              <mat-option value="medium">Standard (450-550 RSD)</mat-option>
+              <mat-option value="high">Premium (> 550 RSD)</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="filter-actions">
+            <button mat-raised-button color="primary" (click)="applyFilters()">
+              Apply Filters
+            </button>
+            <button mat-button (click)="resetFilters()">
+              Reset Filters
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <div *ngIf="!loading && filteredScreenings.length === 0" class="no-results">
+    <mat-card>
+      <mat-card-content>
+        <p>No screenings found matching your criteria. Try adjusting your filters.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!loading && filteredScreenings.length > 0" class="screenings-grid">
+    <mat-card *ngFor="let screening of filteredScreenings" class="screening-card">
+      <mat-card-header>
+        <div mat-card-avatar class="movie-avatar"
+             [style.background-image]="'url(' + (screening.movie?.coverUrl || 'assets/images/movie-placeholder.jpg') + ')'">
+        </div>
+        <mat-card-title>{{ screening.movie?.title }}</mat-card-title>
+        <mat-card-subtitle>
+          {{ formatDate(screening.date) }} at {{ screening.time }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="screening-info">
+          <div class="screening-detail">
+            <mat-icon>movie</mat-icon>
+            <span>{{ getDuration(screening.movie?.runtime) }}</span>
+          </div>
+
+          <div class="screening-detail">
+            <mat-icon>meeting_room</mat-icon>
+            <span>{{ screening.hall }}</span>
+          </div>
+
+          <div class="screening-detail" [ngClass]="{'low-seats': screening.availableSeats < 10}">
+            <mat-icon>event_seat</mat-icon>
+            <span>{{ screening.availableSeats }} seats</span>
+          </div>
+
+          <div class="screening-detail price">
+            <mat-icon>payments</mat-icon>
+            <span>{{ screening.price }} RSD</span>
+          </div>
+        </div>
+
+        <div class="movie-genres" *ngIf="screening.movie?.genres?.length">
+          <mat-chip-set>
+            <mat-chip *ngFor="let genre of screening.movie.genres.slice(0, 3)">{{ genre.name }}</mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <a mat-button [routerLink]="['/movies', screening.movieId]">Movie Details</a>
+        <button mat-raised-button color="accent" (click)="addToCart(screening)"
+                [disabled]="screening.availableSeats === 0">
+          Add to Cart
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,206 @@
+.reservations-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 24px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+.empty-reservations {
+  text-align: center;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+}
+
+.empty-content mat-icon {
+  font-size: 64px;
+  height: 64px;
+  width: 64px;
+  margin-bottom: 16px;
+  color: #9e9e9e;
+}
+
+.empty-content h2 {
+  margin-bottom: 16px;
+  color: #616161;
+}
+
+.empty-content p {
+  margin-bottom: 24px;
+  color: #757575;
+  max-width: 400px;
+}
+
+.tab-content {
+  padding: 24px 0;
+}
+
+.no-reservations {
+  text-align: center;
+  padding: 40px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.reservations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reservation-card {
+  padding: 16px;
+}
+
+.reservation-content {
+  display: flex;
+  gap: 16px;
+}
+
+.movie-poster {
+  width: 120px;
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.movie-poster.faded {
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+.reservation-details {
+  flex-grow: 1;
+}
+
+.reservation-details h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.screening-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reservation-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.reservation-status {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-badge.reserved {
+  background-color: #2196f3;
+  color: white;
+}
+
+.status-badge.watched {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-badge.canceled {
+  background-color: #f44336;
+  color: white;
+}
+
+.reservation-date {
+  font-size: 0.8rem;
+  color: #757575;
+}
+
+.ticket-price {
+  font-weight: bold;
+}
+
+.rating-display {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.rating-stars {
+  color: #ffc107;
+  display: flex;
+}
+
+.review-text {
+  font-style: italic;
+  color: #616161;
+  font-size: 0.9rem;
+}
+
+.reservation-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .reservation-content {
+    flex-direction: column;
+  }
+
+  .movie-poster {
+    width: 100%;
+    height: 200px;
+  }
+
+  .reservation-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .rating-display {
+    align-items: flex-start;
+  }
+
+  .reservation-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+}
