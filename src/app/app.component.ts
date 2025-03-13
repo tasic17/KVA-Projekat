@@ -7,6 +7,7 @@ import { NgIf, AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -24,7 +25,7 @@ import { AuthService } from './services/auth.service';
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit {
-  isLoggedIn$: Observable<boolean>;
+  isLoggedIn$: Observable<boolean> = new Observable<boolean>();
 
   constructor(
     private authService: AuthService,
@@ -32,11 +33,9 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isLoggedIn$ = new Observable<boolean>(observer => {
-      this.authService.currentUser$.subscribe(user => {
-        observer.next(!!user);
-      });
-    });
+    this.isLoggedIn$ = this.authService.currentUser$.pipe(
+      map(user => !!user)
+    );
   }
 
   logout(): void {
