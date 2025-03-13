@@ -118,7 +118,43 @@ export class MovieDetailComponent implements OnInit {
     );
   }
 
-  getFormattedDate(dateString: string): string {
+  // Helper methods for templates
+  getMovieCoverUrl(): string {
+    return this.movie?.coverUrl || 'assets/images/movie-placeholder.jpg';
+  }
+
+  hasGenres(): boolean {
+    return !!this.movie?.genres && this.movie.genres.length > 0;
+  }
+
+  hasDirectors(): boolean {
+    return !!this.movie?.directors && this.movie.directors.length > 0;
+  }
+
+  hasActors(): boolean {
+    return !!this.movie?.actors && this.movie.actors.length > 0;
+  }
+
+  getDirectorNames(): string {
+    if (!this.movie?.directors || this.movie.directors.length === 0) {
+      return '';
+    }
+    return this.movie.directors.map(d => d.name).join(', ');
+  }
+
+  getActorNames(): string {
+    if (!this.movie?.actors || this.movie.actors.length === 0) {
+      return '';
+    }
+    return this.movie.actors.map(a => a.name).join(', ');
+  }
+
+  isLowSeats(screening: Screening): boolean {
+    return screening.availableSeats < 10;
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -126,6 +162,27 @@ export class MovieDetailComponent implements OnInit {
       month: 'long',
       day: 'numeric'
     });
+  }
+
+  formatDateDay(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
+  }
+
+  formatDateMonthDay(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric'
+    });
+  }
+
+  formatReviewDate(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
   }
 
   getRatingStars(rating: number): string[] {

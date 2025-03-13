@@ -12,7 +12,7 @@
   <div *ngIf="!loading && movie" class="movie-content">
     <div class="movie-header">
       <div class="movie-poster-container">
-        <img [src]="movie.coverUrl || 'assets/images/movie-placeholder.jpg'" [alt]="movie.title" class="movie-poster">
+        <img [src]="getMovieCoverUrl()" [alt]="movie.title" class="movie-poster">
       </div>
 
       <div class="movie-info">
@@ -34,11 +34,11 @@
 
           <div class="movie-release" *ngIf="movie.releaseDate">
             <mat-icon>event</mat-icon>
-            <span>{{ getFormattedDate(movie.releaseDate) }}</span>
+            <span>{{ formatDate(movie.releaseDate) }}</span>
           </div>
         </div>
 
-        <div class="movie-genres" *ngIf="movie.genres?.length">
+        <div class="movie-genres" *ngIf="hasGenres()">
           <mat-chip-set>
             <mat-chip *ngFor="let genre of movie.genres">{{ genre.name }}</mat-chip>
           </mat-chip-set>
@@ -49,14 +49,14 @@
         </div>
 
         <div class="movie-crew">
-          <div class="directors" *ngIf="movie.directors?.length">
+          <div class="directors" *ngIf="hasDirectors()">
             <h3>Director{{ movie.directors.length > 1 ? 's' : '' }}</h3>
-            <p>{{ movie.directors.map(d => d.name).join(', ') }}</p>
+            <p>{{ getDirectorNames() }}</p>
           </div>
 
-          <div class="cast" *ngIf="movie.actors?.length">
+          <div class="cast" *ngIf="hasActors()">
             <h3>Cast</h3>
-            <p>{{ movie.actors.map(a => a.name).join(', ') }}</p>
+            <p>{{ getActorNames() }}</p>
           </div>
         </div>
       </div>
@@ -73,8 +73,8 @@
             <div *ngFor="let screening of screenings" class="screening-item">
               <div class="screening-info">
                 <div class="screening-date">
-                  <div class="date-day">{{ new Date(screening.date).toLocaleDateString('en-US', {weekday: 'short'}) }}</div>
-                  <div class="date-full">{{ new Date(screening.date).toLocaleDateString('en-US', {month: 'short', day: 'numeric'}) }}</div>
+                  <div class="date-day">{{ formatDateDay(screening.date) }}</div>
+                  <div class="date-full">{{ formatDateMonthDay(screening.date) }}</div>
                 </div>
 
                 <div class="screening-time">
@@ -87,7 +87,7 @@
                   <span>{{ screening.hall }}</span>
                 </div>
 
-                <div class="screening-seats" [ngClass]="{'low-seats': screening.availableSeats < 10}">
+                <div class="screening-seats" [ngClass]="{'low-seats': isLowSeats(screening)}">
                   <mat-icon>event_seat</mat-icon>
                   <span>{{ screening.availableSeats }} seats available</span>
                 </div>
@@ -126,7 +126,7 @@
                 </div>
 
                 <div class="review-date">
-                  {{ new Date(review.date).toLocaleDateString() }}
+                  {{ formatReviewDate(review.date) }}
                 </div>
               </div>
 

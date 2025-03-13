@@ -45,4 +45,28 @@ export class HomeComponent implements OnInit {
       }
     );
   }
+
+  // Helper methods to avoid complex template expressions
+  getGenreNames(movie: Movie): string {
+    if (!movie.genres || movie.genres.length === 0) {
+      return 'No genres';
+    }
+    return movie.genres.map(g => g.name).join(', ');
+  }
+
+  getDescription(movie: Movie): string {
+    if (!movie.description) {
+      return 'No description available';
+    }
+
+    const truncated = movie.description.slice(0, 120);
+    if (movie.description.length > 120) {
+      return truncated + '...';
+    }
+    return truncated;
+  }
+
+  getMovieCoverUrl(movie: Movie): string {
+    return movie.coverUrl || 'assets/images/movie-placeholder.jpg';
+  }
 }

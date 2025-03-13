@@ -20,6 +20,7 @@ import { AuthService } from '../../services/auth.service';
 
 import { Screening } from '../../models/screening.model';
 import { Movie } from '../../models/movie.model';
+import { Genre } from '../../models/genre.model';
 
 @Component({
   selector: 'app-screening-list',
@@ -149,6 +150,7 @@ export class ScreeningListComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
+    if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       weekday: 'short',
@@ -157,9 +159,19 @@ export class ScreeningListComponent implements OnInit {
     });
   }
 
-  getDuration(runtime?: number): string {
-    if (!runtime) return 'Unknown duration';
+  // Helper methods
+  getScreeningMovieCoverUrl(screening: Screening): string {
+    return screening.movie?.coverUrl || '';
+  }
 
+  getScreeningMovieTitle(screening: Screening): string {
+    return screening.movie?.title || 'Unknown Movie';
+  }
+
+  getScreeningMovieDuration(screening: Screening): string {
+    if (!screening.movie?.runtime) return 'Unknown duration';
+
+    const runtime = screening.movie.runtime;
     const hours = Math.floor(runtime / 60);
     const minutes = runtime % 60;
 
@@ -168,6 +180,19 @@ export class ScreeningListComponent implements OnInit {
     } else {
       return `${minutes}m`;
     }
+  }
+
+  hasScreeningMovieGenres(screening: Screening): boolean {
+    return !!screening.movie?.genres && screening.movie.genres.length > 0;
+  }
+
+  getScreeningMovieGenres(screening: Screening): Genre[] {
+    if (!screening.movie?.genres) return [];
+    return screening.movie.genres.slice(0, 3); // Limit to 3 genres
+  }
+
+  isLowSeats(screening: Screening): boolean {
+    return screening.availableSeats < 10;
   }
 
   addToCart(screening: Screening): void {

@@ -18,11 +18,11 @@
 
   <div *ngIf="!loading" class="movie-grid">
     <mat-card *ngFor="let movie of featuredMovies" class="movie-card">
-      <img mat-card-image [src]="movie.coverUrl || 'assets/images/movie-placeholder.jpg'" [alt]="movie.title" class="movie-poster">
+      <img mat-card-image [src]="getMovieCoverUrl(movie)" [alt]="movie.title" class="movie-poster">
       <mat-card-content>
         <h3>{{ movie.title }}</h3>
-        <p class="movie-genres">{{ movie.genres?.map(g => g.name).join(', ') }}</p>
-        <p class="movie-description">{{ movie.description | slice:0:120 }}{{ movie.description.length > 120 ? '...' : '' }}</p>
+        <p class="movie-genres">{{ getGenreNames(movie) }}</p>
+        <p class="movie-description">{{ getDescription(movie) }}</p>
       </mat-card-content>
       <mat-card-actions>
         <a mat-button [routerLink]="['/movies', movie.id]">View Details</a>

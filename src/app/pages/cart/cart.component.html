@@ -6,7 +6,7 @@
   </div>
 
   <ng-container *ngIf="!loading">
-    <div *ngIf="cart?.reservations?.length === 0" class="empty-cart">
+    <div *ngIf="!cart || !cart.reservations || cart.reservations.length === 0" class="empty-cart">
       <mat-card>
         <mat-card-content>
           <div class="empty-cart-content">
@@ -19,37 +19,37 @@
       </mat-card>
     </div>
 
-    <div *ngIf="cart?.reservations?.length > 0" class="cart-content">
+    <div *ngIf="cart && cart.reservations && cart.reservations.length > 0" class="cart-content">
       <div class="cart-items">
         <mat-card *ngFor="let reservation of cart.reservations" class="cart-item">
           <div class="item-content">
             <div class="item-image"
-                 [style.background-image]="'url(' + (reservation.screening?.movie?.coverUrl || 'assets/images/movie-placeholder.jpg') + ')'">
+                 [style.background-image]="'url(' + (getScreeningImage(reservation) || 'assets/images/movie-placeholder.jpg') + ')'">
             </div>
 
             <div class="item-details">
-              <h3>{{ reservation.screening?.movie?.title }}</h3>
+              <h3>{{ getScreeningTitle(reservation) }}</h3>
 
               <div class="item-meta">
                 <div class="screening-info">
                   <div class="info-item">
                     <mat-icon>calendar_today</mat-icon>
-                    <span>{{ formatDate(reservation.screening?.date) }}</span>
+                    <span>{{ formatDate(getScreeningDate(reservation)) }}</span>
                   </div>
 
                   <div class="info-item">
                     <mat-icon>schedule</mat-icon>
-                    <span>{{ reservation.screening?.time }}</span>
+                    <span>{{ getScreeningTime(reservation) }}</span>
                   </div>
 
                   <div class="info-item">
                     <mat-icon>meeting_room</mat-icon>
-                    <span>{{ reservation.screening?.hall }}</span>
+                    <span>{{ getScreeningHall(reservation) }}</span>
                   </div>
                 </div>
 
                 <div class="item-price">
-                  <span>{{ reservation.screening?.price }} RSD</span>
+                  <span>{{ getScreeningPrice(reservation) }} RSD</span>
                 </div>
               </div>
             </div>
@@ -69,13 +69,13 @@
           <h2>Order Summary</h2>
 
           <div class="summary-row">
-            <span>Tickets ({{ cart.reservations.length }})</span>
-            <span>{{ cart.totalPrice }} RSD</span>
+            <span>Tickets ({{ getTicketCount() }})</span>
+            <span>{{ getTotalPrice() }} RSD</span>
           </div>
 
           <div class="summary-row total">
             <span>Total</span>
-            <span>{{ cart.totalPrice }} RSD</span>
+            <span>{{ getTotalPrice() }} RSD</span>
           </div>
 
           <div class="checkout-actions">

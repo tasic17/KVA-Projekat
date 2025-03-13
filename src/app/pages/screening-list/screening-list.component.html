@@ -64,9 +64,9 @@
     <mat-card *ngFor="let screening of filteredScreenings" class="screening-card">
       <mat-card-header>
         <div mat-card-avatar class="movie-avatar"
-             [style.background-image]="'url(' + (screening.movie?.coverUrl || 'assets/images/movie-placeholder.jpg') + ')'">
+             [style.background-image]="'url(' + (getScreeningMovieCoverUrl(screening) || 'assets/images/movie-placeholder.jpg') + ')'">
         </div>
-        <mat-card-title>{{ screening.movie?.title }}</mat-card-title>
+        <mat-card-title>{{ getScreeningMovieTitle(screening) }}</mat-card-title>
         <mat-card-subtitle>
           {{ formatDate(screening.date) }} at {{ screening.time }}
         </mat-card-subtitle>
@@ -76,7 +76,7 @@
         <div class="screening-info">
           <div class="screening-detail">
             <mat-icon>movie</mat-icon>
-            <span>{{ getDuration(screening.movie?.runtime) }}</span>
+            <span>{{ getScreeningMovieDuration(screening) }}</span>
           </div>
 
           <div class="screening-detail">
@@ -84,7 +84,7 @@
             <span>{{ screening.hall }}</span>
           </div>
 
-          <div class="screening-detail" [ngClass]="{'low-seats': screening.availableSeats < 10}">
+          <div class="screening-detail" [ngClass]="{'low-seats': isLowSeats(screening)}">
             <mat-icon>event_seat</mat-icon>
             <span>{{ screening.availableSeats }} seats</span>
           </div>
@@ -95,9 +95,9 @@
           </div>
         </div>
 
-        <div class="movie-genres" *ngIf="screening.movie?.genres?.length">
+        <div class="movie-genres" *ngIf="hasScreeningMovieGenres(screening)">
           <mat-chip-set>
-            <mat-chip *ngFor="let genre of screening.movie.genres.slice(0, 3)">{{ genre.name }}</mat-chip>
+            <mat-chip *ngFor="let genre of getScreeningMovieGenres(screening)">{{ genre.name }}</mat-chip>
           </mat-chip-set>
         </div>
       </mat-card-content>

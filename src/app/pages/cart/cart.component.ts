@@ -12,6 +12,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { Cart } from '../../models/cart.model';
+import { Reservation } from '../../models/reservation.model';
 import { take } from 'rxjs/operators';
 
 @Component({
@@ -124,7 +125,40 @@ export class CartComponent implements OnInit {
     }
   }
 
-  formatDate(dateString?: string): string {
+  // Helper methods to safely access nested properties
+  getScreeningImage(reservation: Reservation): string {
+    return reservation?.screening?.movie?.coverUrl || '';
+  }
+
+  getScreeningTitle(reservation: Reservation): string {
+    return reservation?.screening?.movie?.title || 'Unknown Movie';
+  }
+
+  getScreeningDate(reservation: Reservation): string {
+    return reservation?.screening?.date || '';
+  }
+
+  getScreeningTime(reservation: Reservation): string {
+    return reservation?.screening?.time || 'N/A';
+  }
+
+  getScreeningHall(reservation: Reservation): string {
+    return reservation?.screening?.hall || 'N/A';
+  }
+
+  getScreeningPrice(reservation: Reservation): number {
+    return reservation?.screening?.price || 0;
+  }
+
+  getTicketCount(): number {
+    return this.cart?.reservations?.length || 0;
+  }
+
+  getTotalPrice(): number {
+    return this.cart?.totalPrice || 0;
+  }
+
+  formatDate(dateString: string): string {
     if (!dateString) return '';
 
     const date = new Date(dateString);
