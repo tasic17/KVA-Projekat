@@ -64,7 +64,7 @@
     <mat-card *ngFor="let screening of filteredScreenings" class="screening-card">
       <mat-card-header>
         <div mat-card-avatar class="movie-avatar"
-             [style.background-image]="'url(' + (getScreeningMovieCoverUrl(screening) || 'assets/images/movie-placeholder.jpg') + ')'">
+             [style.background-image]="'url(' + (getScreeningMovieCoverUrl(screening)) + ')'">
         </div>
         <mat-card-title>{{ getScreeningMovieTitle(screening) }}</mat-card-title>
         <mat-card-subtitle>

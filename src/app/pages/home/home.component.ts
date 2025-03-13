@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
 import { Movie } from '../../models/movie.model';
 
@@ -17,7 +18,8 @@ import { Movie } from '../../models/movie.model';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HttpClientModule,
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
@@ -46,7 +48,15 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  // Helper methods to avoid complex template expressions
+  // Helper methods for template
+  getMovieCoverUrl(movie: Movie): string {
+    if (movie.coverUrl && movie.coverUrl.trim() !== '' &&
+      movie.coverUrl.startsWith('http')) {
+      return movie.coverUrl;
+    }
+    return 'assets/images/movie-placeholder.jpg';
+  }
+
   getGenreNames(movie: Movie): string {
     if (!movie.genres || movie.genres.length === 0) {
       return 'No genres';
@@ -64,9 +74,5 @@ export class HomeComponent implements OnInit {
       return truncated + '...';
     }
     return truncated;
-  }
-
-  getMovieCoverUrl(movie: Movie): string {
-    return movie.coverUrl || 'assets/images/movie-placeholder.jpg';
   }
 }

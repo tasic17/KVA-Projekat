@@ -12,6 +12,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClientModule } from '@angular/common/http';
 
 import { ScreeningService } from '../../services/screening.service';
 import { ApiService } from '../../services/api.service';
@@ -38,7 +39,8 @@ import { Genre } from '../../models/genre.model';
     MatNativeDateModule,
     MatIconModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    HttpClientModule,
   ],
   templateUrl: './screening-list.component.html',
   styleUrls: ['./screening-list.component.css']
@@ -159,9 +161,14 @@ export class ScreeningListComponent implements OnInit {
     });
   }
 
-  // Helper methods
+  // Helper methods for images and nested properties
   getScreeningMovieCoverUrl(screening: Screening): string {
-    return screening.movie?.coverUrl || '';
+    if (screening.movie?.coverUrl &&
+      screening.movie.coverUrl.trim() !== '' &&
+      screening.movie.coverUrl.startsWith('http')) {
+      return screening.movie.coverUrl;
+    }
+    return 'assets/images/movie-placeholder.jpg';
   }
 
   getScreeningMovieTitle(screening: Screening): string {
@@ -207,7 +214,7 @@ export class ScreeningListComponent implements OnInit {
     this.reservationService.addToCart(screening.id).subscribe(
       cart => {
         if (cart) {
-          // Show success message (in a real app, use a proper notification service)
+          // Show success message
           alert('Added to cart successfully!');
         } else {
           alert('Failed to add to cart. Please try again.');

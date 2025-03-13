@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2035;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#121625;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="600" fill="url(#bgGradient)"/>
+
+  <!-- Cinema Screen -->
+  <rect x="200" y="100" width="800" height="300" rx="10" fill="#f5f5f5" opacity="0.1"/>
+  <rect x="220" y="120" width="760" height="260" rx="5" fill="#ffffff" opacity="0.05"/>
+
+  <!-- Film reel elements -->
+  <circle cx="100" cy="150" r="70" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.2"/>
+  <circle cx="100" cy="150" r="20" fill="#ffffff" opacity="0.2"/>
+  <circle cx="100" cy="150" r="50" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.1"/>
+
+  <circle cx="1100" cy="450" r="70" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.2"/>
+  <circle cx="1100" cy="450" r="20" fill="#ffffff" opacity="0.2"/>
+  <circle cx="1100" cy="450" r="50" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.1"/>
+
+  <!-- Cinema seats -->
+  <rect x="250" y="450" width="700" height="100" rx="5" fill="#673ab7" opacity="0.2"/>
+
+  <!-- Small stars/light particles -->
+  <g opacity="0.4">
+    <circle cx="300" cy="200" r="2" fill="#ffffff"/>
+    <circle cx="400" cy="150" r="1" fill="#ffffff"/>
+    <circle cx="500" cy="250" r="1.5" fill="#ffffff"/>
+    <circle cx="600" cy="180" r="1" fill="#ffffff"/>
+    <circle cx="700" cy="220" r="2" fill="#ffffff"/>
+    <circle cx="800" cy="170" r="1" fill="#ffffff"/>
+    <circle cx="900" cy="230" r="1.5" fill="#ffffff"/>
+    <circle cx="350" cy="300" r="1" fill="#ffffff"/>
+    <circle cx="450" cy="350" r="2" fill="#ffffff"/>
+    <circle cx="550" cy="320" r="1" fill="#ffffff"/>
+    <circle cx="650" cy="280" r="1.5" fill="#ffffff"/>
+    <circle cx="750" cy="330" r="1" fill="#ffffff"/>
+    <circle cx="850" cy="290" r="2" fill="#ffffff"/>
+    <circle cx="950" cy="310" r="1" fill="#ffffff"/>
+  </g>
+
+  <!-- Popcorn icon -->
+  <g transform="translate(130, 400) scale(0.5)" opacity="0.3">
+    <path d="M60,40 Q80,0 100,40 Q120,10 140,40 Q160,20 180,40 Q200,0 220,40 L240,40 L240,80 L200,200 L80,200 L40,80 L40,40 Z" fill="#f5f5f5"/>
+    <ellipse cx="90" cy="80" rx="10" ry="10" fill="#ffeb3b"/>
+    <ellipse cx="140" cy="110" rx="10" ry="10" fill="#ffeb3b"/>
+    <ellipse cx="190" cy="90" rx="10" ry="10" fill="#ffeb3b"/>
+    <ellipse cx="110" cy="150" rx="10" ry="10" fill="#ffeb3b"/>
+    <ellipse cx="170" cy="160" rx="10" ry="10" fill="#ffeb3b"/>
+  </g>
+
+  <!-- Cinema ticket -->
+  <g transform="translate(1000, 200) rotate(-15)" opacity="0.3">
+    <rect x="0" y="0" width="120" height="60" rx="5" fill="#f5f5f5"/>
+    <line x1="30" y1="0" x2="30" y2="60" stroke="#673ab7" stroke-width="1" stroke-dasharray="5,5"/>
+    <circle cx="30" cy="10" r="5" fill="#673ab7"/>
+    <circle cx="30" cy="50" r="5" fill="#673ab7"/>
+    <line x1="40" y1="15" x2="110" y2="15" stroke="#673ab7" stroke-width="1"/>
+    <line x1="40" y1="30" x2="110" y2="30" stroke="#673ab7" stroke-width="1"/>
+    <line x1="40" y1="45" x2="110" y2="45" stroke="#673ab7" stroke-width="1"/>
+  </g>
+
+  <!-- 3D glasses -->
+  <g transform="translate(900, 100)" opacity="0.3">
+    <path d="M10,20 L50,10 L90,20 L90,40 L50,50 L10,40 Z" fill="#f44336" opacity="0.5"/>
+    <path d="M110,20 L150,10 L190,20 L190,40 L150,50 L110,40 Z" fill="#2196f3" opacity="0.5"/>
+    <path d="M50,10 L150,10" stroke="#f5f5f5" stroke-width="5"/>
+  </g>
+</svg>

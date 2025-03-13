@@ -1,4 +1,3 @@
-// src/app/services/api.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -38,18 +37,79 @@ export class ApiService {
     }
 
     return this.http.get<Movie[]>(url).pipe(
+      map(movies => {
+        return movies.map(movie => {
+          // Fix missing or invalid image URLs
+          if (!movie.coverUrl || !movie.coverUrl.startsWith('http')) {
+            // If you know the actual base URL of the API's images, use it here
+            const apiImageBaseUrl = 'https://movie.pequla.com/api/images/';
+
+            // Try to create a valid URL from partial paths, or use placeholder
+            if (movie.coverUrl && !movie.coverUrl.startsWith('http')) {
+              movie.coverUrl = `${apiImageBaseUrl}${movie.coverUrl}`;
+            } else {
+              movie.coverUrl = ''; // Will be replaced with placeholder by component
+            }
+          }
+          return movie;
+        });
+      }),
       catchError(this.handleError<Movie[]>('getMovies', []))
     );
   }
 
   getMovieById(id: number): Observable<Movie> {
     return this.http.get<Movie>(`${this.baseUrl}/movie/${id}`).pipe(
+      map(movie => {
+        // Fix missing or invalid image URL
+        if (!movie.coverUrl || !movie.coverUrl.startsWith('http')) {
+          const apiImageBaseUrl = 'https://movie.pequla.com/api/images/';
+
+          if (movie.coverUrl && !movie.coverUrl.startsWith('http')) {
+            movie.coverUrl = `${apiImageBaseUrl}${movie.coverUrl}`;
+          } else {
+            movie.coverUrl = '';
+          }
+        }
+
+        // Also fix actor/director image URLs if present
+        if (movie.actors) {
+          movie.actors.forEach(actor => {
+            if (actor.imageUrl && !actor.imageUrl.startsWith('http')) {
+              actor.imageUrl = `https://movie.pequla.com/api/images/${actor.imageUrl}`;
+            }
+          });
+        }
+
+        if (movie.directors) {
+          movie.directors.forEach(director => {
+            if (director.imageUrl && !director.imageUrl.startsWith('http')) {
+              director.imageUrl = `https://movie.pequla.com/api/images/${director.imageUrl}`;
+            }
+          });
+        }
+
+        return movie;
+      }),
       catchError(this.handleError<Movie>('getMovieById'))
     );
   }
 
   getMovieByShortUrl(shortUrl: string): Observable<Movie> {
     return this.http.get<Movie>(`${this.baseUrl}/movie/short/${shortUrl}`).pipe(
+      map(movie => {
+        // Apply the same image URL fixes
+        if (!movie.coverUrl || !movie.coverUrl.startsWith('http')) {
+          const apiImageBaseUrl = 'https://movie.pequla.com/api/images/';
+
+          if (movie.coverUrl && !movie.coverUrl.startsWith('http')) {
+            movie.coverUrl = `${apiImageBaseUrl}${movie.coverUrl}`;
+          } else {
+            movie.coverUrl = '';
+          }
+        }
+        return movie;
+      }),
       catchError(this.handleError<Movie>('getMovieByShortUrl'))
     );
   }
@@ -84,12 +144,28 @@ export class ApiService {
       url += `?search=${search}`;
     }
     return this.http.get<Actor[]>(url).pipe(
+      map(actors => {
+        return actors.map(actor => {
+          // Fix actor image URLs
+          if (actor.imageUrl && !actor.imageUrl.startsWith('http')) {
+            actor.imageUrl = `https://movie.pequla.com/api/images/${actor.imageUrl}`;
+          }
+          return actor;
+        });
+      }),
       catchError(this.handleError<Actor[]>('getActors', []))
     );
   }
 
   getActorById(id: number): Observable<Actor> {
     return this.http.get<Actor>(`${this.baseUrl}/actor/${id}`).pipe(
+      map(actor => {
+        // Fix actor image URL
+        if (actor.imageUrl && !actor.imageUrl.startsWith('http')) {
+          actor.imageUrl = `https://movie.pequla.com/api/images/${actor.imageUrl}`;
+        }
+        return actor;
+      }),
       catchError(this.handleError<Actor>('getActorById'))
     );
   }
@@ -101,12 +177,28 @@ export class ApiService {
       url += `?search=${search}`;
     }
     return this.http.get<Director[]>(url).pipe(
+      map(directors => {
+        return directors.map(director => {
+          // Fix director image URLs
+          if (director.imageUrl && !director.imageUrl.startsWith('http')) {
+            director.imageUrl = `https://movie.pequla.com/api/images/${director.imageUrl}`;
+          }
+          return director;
+        });
+      }),
       catchError(this.handleError<Director[]>('getDirectors', []))
     );
   }
 
   getDirectorById(id: number): Observable<Director> {
     return this.http.get<Director>(`${this.baseUrl}/director/${id}`).pipe(
+      map(director => {
+        // Fix director image URL
+        if (director.imageUrl && !director.imageUrl.startsWith('http')) {
+          director.imageUrl = `https://movie.pequla.com/api/images/${director.imageUrl}`;
+        }
+        return director;
+      }),
       catchError(this.handleError<Director>('getDirectorById'))
     );
   }

@@ -30,7 +30,7 @@ import { Director } from '../../models/director.model';
     MatSelectModule,
     MatIconModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
   ],
   templateUrl: './movie-list.component.html',
   styleUrls: ['./movie-list.component.css']
@@ -60,6 +60,7 @@ export class MovieListComponent implements OnInit {
   }
 
   loadMovies(): void {
+    this.loading = true;
     this.apiService.getMovies().subscribe(
       movies => {
         this.movies = movies;
@@ -134,11 +135,45 @@ export class MovieListComponent implements OnInit {
     this.filteredMovies = this.movies;
   }
 
-  getGenreNames(genres: Genre[]): string {
-    return genres?.map(g => g.name).join(', ') || '';
+  getMovieCoverUrl(movie: Movie): string {
+    // Check if image URL exists and is not an empty string
+    if (movie.coverUrl && movie.coverUrl.trim() !== '') {
+      // Check if the URL is valid by testing if it starts with http
+      if (movie.coverUrl.startsWith('http')) {
+        return movie.coverUrl;
+      }
+    }
+    // Return local placeholder if URL is missing or invalid
+    return 'assets/images/movie-placeholder.jpg';
   }
 
-  getDirectorNames(directors: Director[]): string {
-    return directors?.map(d => d.name).join(', ') || '';
+  getMovieGenres(movie: Movie): Genre[] {
+    if (!movie.genres || movie.genres.length === 0) {
+      return [];
+    }
+    return movie.genres.slice(0, 2); // Limit to first 2 genres for display
+  }
+
+  hasDirectors(movie: Movie): boolean {
+    return !!movie.directors && movie.directors.length > 0;
+  }
+
+  getDirectorNames(movie: Movie): string {
+    if (!movie.directors || movie.directors.length === 0) {
+      return '';
+    }
+    return movie.directors.map(d => d.name).join(', ');
+  }
+
+  getMovieDescription(movie: Movie): string {
+    if (!movie.description) {
+      return 'No description available';
+    }
+
+    const truncated = movie.description.slice(0, 120);
+    if (movie.description.length > 120) {
+      return truncated + '...';
+    }
+    return truncated;
   }
 }

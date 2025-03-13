@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { HttpClientModule } from '@angular/common/http';
 
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -27,7 +28,8 @@ import { take } from 'rxjs/operators';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    HttpClientModule,
   ],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
@@ -125,29 +127,34 @@ export class CartComponent implements OnInit {
     }
   }
 
-  // Helper methods to safely access nested properties
+  // Helper methods for safely accessing nested properties
   getScreeningImage(reservation: Reservation): string {
-    return reservation?.screening?.movie?.coverUrl || '';
+    if (!reservation.screening || !reservation.screening.movie ||
+      !reservation.screening.movie.coverUrl ||
+      !reservation.screening.movie.coverUrl.startsWith('http')) {
+      return 'assets/images/movie-placeholder.jpg';
+    }
+    return reservation.screening.movie.coverUrl;
   }
 
   getScreeningTitle(reservation: Reservation): string {
-    return reservation?.screening?.movie?.title || 'Unknown Movie';
+    return reservation.screening?.movie?.title || 'Unknown Movie';
   }
 
   getScreeningDate(reservation: Reservation): string {
-    return reservation?.screening?.date || '';
+    return reservation.screening?.date || '';
   }
 
   getScreeningTime(reservation: Reservation): string {
-    return reservation?.screening?.time || 'N/A';
+    return reservation.screening?.time || 'N/A';
   }
 
   getScreeningHall(reservation: Reservation): string {
-    return reservation?.screening?.hall || 'N/A';
+    return reservation.screening?.hall || 'N/A';
   }
 
   getScreeningPrice(reservation: Reservation): number {
-    return reservation?.screening?.price || 0;
+    return reservation.screening?.price || 0;
   }
 
   getTicketCount(): number {

@@ -12,7 +12,11 @@
   <div *ngIf="!loading && movie" class="movie-content">
     <div class="movie-header">
       <div class="movie-poster-container">
-        <img [src]="getMovieCoverUrl()" [alt]="movie.title" class="movie-poster">
+        <img
+          [src]="getMovieCoverUrl()"
+          [alt]="movie.title"
+          class="movie-poster"
+          appImgFallback="assets/images/movie-placeholder.jpg">
       </div>
 
       <div class="movie-info">

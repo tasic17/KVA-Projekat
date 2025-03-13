@@ -18,7 +18,12 @@
 
   <div *ngIf="!loading" class="movie-grid">
     <mat-card *ngFor="let movie of featuredMovies" class="movie-card">
-      <img mat-card-image [src]="getMovieCoverUrl(movie)" [alt]="movie.title" class="movie-poster">
+      <img
+        mat-card-image
+        [src]="getMovieCoverUrl(movie)"
+        [alt]="movie.title"
+        class="movie-poster"
+        appImgFallback="assets/images/movie-placeholder.jpg">
       <mat-card-content>
         <h3>{{ movie.title }}</h3>
         <p class="movie-genres">{{ getGenreNames(movie) }}</p>

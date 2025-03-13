@@ -1,5 +1,5 @@
 <div class="movie-list-container">
-  <h1>Movies</h1>
+  <h1 class="page-title">Movies</h1>
 
   <div class="filters-container">
     <div class="search-input">
@@ -46,9 +46,11 @@
 
     <div class="filter-actions">
       <button mat-raised-button color="primary" (click)="applyFilters()">
+        <mat-icon>filter_list</mat-icon>
         Apply Filters
       </button>
       <button mat-button (click)="resetFilters()">
+        <mat-icon>clear</mat-icon>
         Reset Filters
       </button>
     </div>
@@ -59,29 +61,50 @@
   </div>
 
   <div *ngIf="!loading && filteredMovies.length === 0" class="no-results">
-    <p>No movies found matching your criteria. Try adjusting your filters.</p>
+    <div class="no-results-content">
+      <mat-icon>search_off</mat-icon>
+      <h3>No movies found</h3>
+      <p>Try adjusting your filter criteria or search terms.</p>
+      <button mat-stroked-button color="primary" (click)="resetFilters()">Reset All Filters</button>
+    </div>
   </div>
 
   <div *ngIf="!loading && filteredMovies.length > 0" class="movie-grid">
     <mat-card *ngFor="let movie of filteredMovies" class="movie-card">
-      <img mat-card-image [src]="movie.coverUrl || 'assets/images/movie-placeholder.jpg'" [alt]="movie.title" class="movie-poster">
+      <div class="card-image-container">
+        <img
+          mat-card-image
+          [src]="getMovieCoverUrl(movie)"
+          [alt]="movie.title"
+          appImgFallback="assets/images/movie-placeholder.jpg"
+          class="movie-poster">
+        <div class="card-overlay">
+          <span class="movie-runtime" *ngIf="movie.runtime">{{ movie.runtime }} min</span>
+        </div>
+      </div>
+
       <mat-card-content>
-        <h3>{{ movie.title }}</h3>
+        <h3 class="movie-title">{{ movie.title }}</h3>
 
         <div class="movie-meta">
           <mat-chip-set>
-            <mat-chip *ngFor="let genre of movie.genres?.slice(0, 2)">{{ genre.name }}</mat-chip>
+            <mat-chip *ngFor="let genre of getMovieGenres(movie)">{{ genre.name }}</mat-chip>
           </mat-chip-set>
-          <span class="movie-runtime" *ngIf="movie.runtime">{{ movie.runtime }} min</span>
         </div>
 
         <div class="movie-details">
-          <p *ngIf="movie.directors?.length"><strong>Director:</strong> {{ getDirectorNames(movie.directors) }}</p>
-          <p class="movie-description">{{ movie.description | slice:0:120 }}{{ movie.description.length > 120 ? '...' : '' }}</p>
+          <p *ngIf="hasDirectors(movie)"><strong>Director:</strong> {{ getDirectorNames(movie) }}</p>
+          <p class="movie-description">{{ getMovieDescription(movie) }}</p>
         </div>
       </mat-card-content>
+
       <mat-card-actions>
-        <a mat-button [routerLink]="['/movies', movie.id]">View Details</a>
+        <a mat-button [routerLink]="['/movies', movie.id]">
+          <mat-icon>info</mat-icon> Details
+        </a>
+        <a mat-button [routerLink]="['/screenings']" [queryParams]="{movie: movie.id}">
+          <mat-icon>event_seat</mat-icon> Screenings
+        </a>
       </mat-card-actions>
     </mat-card>
   </div>

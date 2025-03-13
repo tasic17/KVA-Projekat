@@ -9,6 +9,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
 import { ScreeningService } from '../../services/screening.service';
 import { ReservationService } from '../../services/reservation.service';
@@ -32,7 +33,8 @@ import { map, switchMap, tap } from 'rxjs/operators';
     MatTabsModule,
     MatListModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatDialogModule,
+    HttpClientModule,
   ],
   templateUrl: './movie-detail.component.html',
   styleUrls: ['./movie-detail.component.css']
@@ -118,9 +120,13 @@ export class MovieDetailComponent implements OnInit {
     );
   }
 
-  // Helper methods for templates
+  // Helper methods for template
   getMovieCoverUrl(): string {
-    return this.movie?.coverUrl || 'assets/images/movie-placeholder.jpg';
+    if (this.movie?.coverUrl && this.movie.coverUrl.trim() !== '' &&
+      this.movie.coverUrl.startsWith('http')) {
+      return this.movie.coverUrl;
+    }
+    return 'assets/images/movie-placeholder.jpg';
   }
 
   hasGenres(): boolean {
@@ -141,7 +147,6 @@ export class MovieDetailComponent implements OnInit {
     }
     return this.movie.directors.map(d => d.name).join(', ');
   }
-
   getActorNames(): string {
     if (!this.movie?.actors || this.movie.actors.length === 0) {
       return '';

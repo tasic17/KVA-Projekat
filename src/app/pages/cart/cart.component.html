@@ -24,7 +24,7 @@
         <mat-card *ngFor="let reservation of cart.reservations" class="cart-item">
           <div class="item-content">
             <div class="item-image"
-                 [style.background-image]="'url(' + (getScreeningImage(reservation) || 'assets/images/movie-placeholder.jpg') + ')'">
+                 [style.background-image]="'url(' + (getScreeningImage(reservation)) + ')'">
             </div>
 
             <div class="item-details">
