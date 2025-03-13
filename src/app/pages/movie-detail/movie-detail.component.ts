@@ -8,7 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { HttpClientModule } from '@angular/common/http';
 import { ApiService } from '../../services/api.service';
 import { ScreeningService } from '../../services/screening.service';
@@ -18,7 +18,7 @@ import { Movie } from '../../models/movie.model';
 import { Screening } from '../../models/screening.model';
 import { Review } from '../../models/review.model';
 import { Observable, forkJoin, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-movie-detail',
@@ -47,6 +47,7 @@ export class MovieDetailComponent implements OnInit {
 
   loading = true;
   isLoggedIn = false;
+  error = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -54,8 +55,7 @@ export class MovieDetailComponent implements OnInit {
     private apiService: ApiService,
     private screeningService: ScreeningService,
     private reservationService: ReservationService,
-    private authService: AuthService,
-    private dialog: MatDialog
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -67,16 +67,48 @@ export class MovieDetailComponent implements OnInit {
       switchMap(params => {
         const movieId = Number(params.get('id'));
         if (isNaN(movieId)) {
-          this.router.navigate(['/movies']);
+          this.error = true;
+          this.loading = false;
           return of(null);
         }
 
-        return forkJoin({
-          movie: this.apiService.getMovieById(movieId),
-          screenings: this.screeningService.getScreeningsByMovieId(movieId),
-          reviews: this.reservationService.getMovieReviews(movieId),
-          averageRating: this.reservationService.getAverageRating(movieId)
-        });
+        // Dodajem catchError da se rukuje sa mogućim API greškama
+        return this.apiService.getMovieById(movieId).pipe(
+          catchError(err => {
+            console.error('Error fetching movie:', err);
+            this.error = true;
+            return of(null);
+          }),
+          switchMap(movie => {
+            if (!movie) {
+              this.error = true;
+              this.loading = false;
+              return of(null);
+            }
+
+            return forkJoin({
+              movie: of(movie),
+              screenings: this.screeningService.getScreeningsByMovieId(movieId).pipe(
+                catchError(err => {
+                  console.error('Error fetching screenings:', err);
+                  return of([]);
+                })
+              ),
+              reviews: this.reservationService.getMovieReviews(movieId).pipe(
+                catchError(err => {
+                  console.error('Error fetching reviews:', err);
+                  return of([]);
+                })
+              ),
+              averageRating: this.reservationService.getAverageRating(movieId).pipe(
+                catchError(err => {
+                  console.error('Error fetching average rating:', err);
+                  return of(0);
+                })
+              )
+            });
+          })
+        );
       })
     ).subscribe(
       result => {
@@ -86,10 +118,6 @@ export class MovieDetailComponent implements OnInit {
           this.reviews = result.reviews;
           this.averageRating = result.averageRating;
         }
-        this.loading = false;
-      },
-      error => {
-        console.error('Error fetching movie details:', error);
         this.loading = false;
       }
     );
@@ -103,8 +131,8 @@ export class MovieDetailComponent implements OnInit {
       return;
     }
 
-    this.reservationService.addToCart(screening.id).subscribe(
-      cart => {
+    this.reservationService.addToCart(screening.id).subscribe({
+      next: (cart) => {
         if (cart) {
           // Show success message
           alert('Added to cart successfully!');
@@ -113,11 +141,11 @@ export class MovieDetailComponent implements OnInit {
           alert('Failed to add to cart. Please try again.');
         }
       },
-      error => {
+      error: (error) => {
         console.error('Error adding to cart:', error);
         alert('Failed to add to cart. Please try again.');
       }
-    );
+    });
   }
 
   // Helper methods for template

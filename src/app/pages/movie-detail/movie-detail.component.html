@@ -3,20 +3,20 @@
     <mat-spinner diameter="40"></mat-spinner>
   </div>
 
-  <div *ngIf="!loading && !movie" class="not-found">
+  <div *ngIf="!loading && error" class="not-found">
     <h2>Movie not found</h2>
     <p>The movie you're looking for doesn't exist or has been removed.</p>
     <a mat-raised-button color="primary" routerLink="/movies">Back to Movies</a>
   </div>
 
-  <div *ngIf="!loading && movie" class="movie-content">
+  <div *ngIf="!loading && movie && !error" class="movie-content">
     <div class="movie-header">
       <div class="movie-poster-container">
         <img
           [src]="getMovieCoverUrl()"
           [alt]="movie.title"
           class="movie-poster"
-          appImgFallback="assets/images/movie-placeholder.jpg">
+          onerror="this.src='assets/images/movie-placeholder.jpg'">
       </div>
 
       <div class="movie-info">
