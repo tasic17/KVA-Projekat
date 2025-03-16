@@ -5,16 +5,6 @@
 }
 
 /* Apply white color to all elements within the container */
-.movie-detail-container,
-.movie-detail-container h1,
-.movie-detail-container h2,
-.movie-detail-container h3,
-.movie-detail-container h4,
-.movie-detail-container p,
-.movie-detail-container div,
-.movie-detail-container span {
-  color: #ffffff !important; /* Bright white color */
-}
 
 .loading-container {
   display: flex;
