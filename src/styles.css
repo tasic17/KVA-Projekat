@@ -281,3 +281,51 @@ button[mat-raised-button][color="accent"] {
   color: #ff9800 !important;
   font-weight: bold !important;
 }
+/* Add these styles to your global styles.css file */
+
+/* Improved snackbar styles for better readability */
+.dark-snackbar {
+  background-color: rgba(33, 33, 33, 0.95) !important;
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  border-left: 4px solid #4caf50 !important; /* Green success indicator */
+}
+
+.dark-snackbar-error {
+  background-color: rgba(33, 33, 33, 0.95) !important;
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  border-left: 4px solid #f44336 !important; /* Red error indicator */
+}
+
+/* For Angular Material MDC version */
+.mat-mdc-snack-bar-container.dark-snackbar .mdc-snackbar__surface {
+  background-color: rgba(33, 33, 33, 0.95) !important;
+  border-left: 4px solid #4caf50 !important;
+}
+
+.mat-mdc-snack-bar-container.dark-snackbar .mat-mdc-snack-bar-label {
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.mat-mdc-snack-bar-container.dark-snackbar .mat-mdc-button {
+  color: #ff9800 !important;
+  font-weight: bold !important;
+}
+
+.mat-mdc-snack-bar-container.dark-snackbar-error .mdc-snackbar__surface {
+  background-color: rgba(33, 33, 33, 0.95) !important;
+  border-left: 4px solid #f44336 !important;
+}
+
+.mat-mdc-snack-bar-container.dark-snackbar-error .mat-mdc-snack-bar-label {
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
