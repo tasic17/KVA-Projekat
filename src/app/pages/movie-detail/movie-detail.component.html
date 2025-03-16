@@ -17,34 +17,34 @@
       <div class="movie-poster-container">
         <img
           [src]="movie?.coverUrl || 'assets/images/movie-placeholder.jpg'"
-          [alt]="movie?.title"
+          [alt]="movie?.title || ''"
           class="movie-poster"
           onerror="this.src='assets/images/movie-placeholder.jpg'">
       </div>
 
       <div class="movie-info">
-        <h1>{{ movie?.title }}</h1>
+        <h1>{{ movie?.title || 'Unknown Title' }}</h1>
 
         <div class="movie-meta">
           <div class="movie-runtime" *ngIf="movie?.runtime">
             <mat-icon>schedule</mat-icon>
-            <span>{{ movie?.runtime }} minutes</span>
+            <span>{{ movie?.runtime || 0 }} minutes</span>
           </div>
 
           <div class="movie-release" *ngIf="movie?.releaseDate">
             <mat-icon>event</mat-icon>
-            <span>{{ formatDate(movie?.releaseDate) }}</span>
+            <span>{{ formatDate(movie?.releaseDate || '') }}</span>
           </div>
         </div>
 
         <div class="movie-genres" *ngIf="movie?.genres && movie?.genres.length > 0">
           <mat-chip-set>
-            <mat-chip *ngFor="let genre of movie?.genres || []">{{ genre?.name }}</mat-chip>
+            <mat-chip *ngFor="let genre of movie?.genres || []">{{ genre?.name || 'Unknown' }}</mat-chip>
           </mat-chip-set>
         </div>
 
         <div class="movie-description">
-          <p>{{ movie?.description }}</p>
+          <p>{{ movie?.description || 'No description available' }}</p>
         </div>
 
         <div class="movie-crew">
@@ -72,27 +72,27 @@
             <div *ngFor="let screening of screenings" class="screening-item">
               <div class="screening-info">
                 <div class="screening-date">
-                  <div class="date-day">{{ formatDateDay(screening?.date) }}</div>
-                  <div class="date-full">{{ formatDateMonthDay(screening?.date) }}</div>
+                  <div class="date-day">{{ formatDateDay(screening?.date || '') }}</div>
+                  <div class="date-full">{{ formatDateMonthDay(screening?.date || '') }}</div>
                 </div>
 
                 <div class="screening-time">
                   <mat-icon>schedule</mat-icon>
-                  <span>{{ screening?.time }}</span>
+                  <span>{{ screening?.time || 'N/A' }}</span>
                 </div>
 
                 <div class="screening-hall">
                   <mat-icon>chair</mat-icon>
-                  <span>{{ screening?.hall }}</span>
+                  <span>{{ screening?.hall || 'N/A' }}</span>
                 </div>
 
                 <div class="screening-seats" [ngClass]="{'low-seats': screening?.availableSeats < 10}">
                   <mat-icon>event_seat</mat-icon>
-                  <span>{{ screening?.availableSeats }} seats available</span>
+                  <span>{{ screening?.availableSeats || 0 }} seats available</span>
                 </div>
 
                 <div class="screening-price">
-                  <span>{{ screening?.price }} RSD</span>
+                  <span>{{ screening?.price || 0 }} RSD</span>
                 </div>
               </div>
 
@@ -117,7 +117,7 @@
             <div *ngFor="let actor of movie?.actors || []" class="cast-item">
               <mat-icon>person</mat-icon>
               <div class="cast-info">
-                <div class="actor-name">{{ actor?.name }}</div>
+                <div class="actor-name">{{ actor?.name || 'Unknown Actor' }}</div>
               </div>
             </div>
           </div>
