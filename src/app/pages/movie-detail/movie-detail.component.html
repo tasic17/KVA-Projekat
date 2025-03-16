@@ -23,39 +23,39 @@
       </div>
 
       <div class="movie-info">
-        <h1>{{ movie?.title || 'Unknown Title' }}</h1>
+        <h1 style="color: white !important;">{{ movie?.title || 'Unknown Title' }}</h1>
 
         <div class="movie-meta">
           <div class="movie-runtime" *ngIf="movie?.runtime">
-            <mat-icon>schedule</mat-icon>
-            <span>{{ movie?.runtime || 0 }} minutes</span>
+            <mat-icon style="color: white !important;">schedule</mat-icon>
+            <span style="color: white !important;">{{ movie?.runtime || 0 }} minutes</span>
           </div>
 
           <div class="movie-release" *ngIf="movie?.releaseDate">
-            <mat-icon>event</mat-icon>
-            <span>{{ formatDate(movie?.releaseDate || '') }}</span>
+            <mat-icon style="color: white !important;">event</mat-icon>
+            <span style="color: white !important;">{{ formatDate(movie?.releaseDate || '') }}</span>
           </div>
         </div>
 
-        <div class="movie-genres" *ngIf="movie?.genres && movie?.genres.length > 0">
+        <div class="movie-genres" *ngIf="movie?.genres && movie.genres.length > 0">
           <mat-chip-set>
-            <mat-chip *ngFor="let genre of movie?.genres || []">{{ genre?.name || 'Unknown' }}</mat-chip>
+            <mat-chip *ngFor="let genre of movie.genres" style="color: white !important;">{{ genre?.name || 'Unknown' }}</mat-chip>
           </mat-chip-set>
         </div>
 
         <div class="movie-description">
-          <p>{{ movie?.description || 'No description available' }}</p>
+          <p style="color: white !important;">{{ movie?.description || 'No description available' }}</p>
         </div>
 
         <div class="movie-crew">
           <div class="directors">
-            <h3>Director{{ movie?.directors && movie?.directors.length > 1 ? 's' : '' }}</h3>
-            <p>{{ getDirectorNames() }}</p>
+            <h3 style="color: white !important;">Director{{ movie?.directors && movie.directors.length > 1 ? 's' : '' }}</h3>
+            <p style="color: white !important;">{{ getDirectorNames() }}</p>
           </div>
 
-          <div class="cast" *ngIf="movie?.actors && movie?.actors.length > 0">
-            <h3>Cast</h3>
-            <p>{{ getActorNames() }}</p>
+          <div class="cast" *ngIf="movie?.actors && movie.actors.length > 0">
+            <h3 style="color: white !important;">Cast</h3>
+            <p style="color: white !important;">{{ getActorNames() }}</p>
           </div>
         </div>
       </div>
@@ -65,40 +65,40 @@
       <mat-tab label="Screenings">
         <div class="tab-content">
           <div *ngIf="screenings.length === 0" class="no-screenings">
-            <p>No upcoming screenings available for this movie.</p>
+            <p style="color: white !important;">No upcoming screenings available for this movie.</p>
           </div>
 
           <div *ngIf="screenings.length > 0" class="screenings-list">
             <div *ngFor="let screening of screenings" class="screening-item">
               <div class="screening-info">
                 <div class="screening-date">
-                  <div class="date-day">{{ formatDateDay(screening?.date || '') }}</div>
-                  <div class="date-full">{{ formatDateMonthDay(screening?.date || '') }}</div>
+                  <div class="date-day" style="color: #ff9800 !important;">{{ formatDateDay(screening?.date || '') }}</div>
+                  <div class="date-full" style="color: white !important;">{{ formatDateMonthDay(screening?.date || '') }}</div>
                 </div>
 
                 <div class="screening-time">
-                  <mat-icon>schedule</mat-icon>
-                  <span>{{ screening?.time || 'N/A' }}</span>
+                  <mat-icon style="color: white !important;">schedule</mat-icon>
+                  <span style="color: white !important;">{{ screening?.time || 'N/A' }}</span>
                 </div>
 
                 <div class="screening-hall">
-                  <mat-icon>chair</mat-icon>
-                  <span>{{ screening?.hall || 'N/A' }}</span>
+                  <mat-icon style="color: white !important;">chair</mat-icon>
+                  <span style="color: white !important;">{{ screening?.hall || 'N/A' }}</span>
                 </div>
 
-                <div class="screening-seats" [ngClass]="{'low-seats': screening?.availableSeats < 10}">
-                  <mat-icon>event_seat</mat-icon>
-                  <span>{{ screening?.availableSeats || 0 }} seats available</span>
+                <div class="screening-seats" [ngClass]="{'low-seats': (screening?.availableSeats || 0) < 10}">
+                  <mat-icon style="color: white !important;">event_seat</mat-icon>
+                  <span style="color: white !important;">{{ screening?.availableSeats || 0 }} seats available</span>
                 </div>
 
                 <div class="screening-price">
-                  <span>{{ screening?.price || 0 }} RSD</span>
+                  <span style="color: #4caf50 !important;">{{ screening?.price || 0 }} RSD</span>
                 </div>
               </div>
 
               <div class="screening-actions">
                 <button mat-raised-button color="accent" (click)="addToCart(screening)"
-                        [disabled]="screening?.availableSeats === 0">
+                        [disabled]="(screening?.availableSeats || 0) === 0">
                   Add to Cart
                 </button>
               </div>
@@ -109,15 +109,15 @@
 
       <mat-tab label="Cast">
         <div class="tab-content">
-          <div *ngIf="!movie?.actors || movie?.actors?.length === 0" class="no-cast">
-            <p>No cast information available for this movie.</p>
+          <div *ngIf="!movie?.actors || (movie.actors && movie.actors.length === 0)" class="no-cast">
+            <p style="color: white !important;">No cast information available for this movie.</p>
           </div>
 
-          <div *ngIf="movie?.actors && movie?.actors?.length > 0" class="cast-list">
-            <div *ngFor="let actor of movie?.actors || []" class="cast-item">
-              <mat-icon>person</mat-icon>
+          <div *ngIf="movie?.actors && movie.actors.length > 0" class="cast-list">
+            <div *ngFor="let actor of movie.actors" class="cast-item">
+              <mat-icon style="color: white !important;">person</mat-icon>
               <div class="cast-info">
-                <div class="actor-name">{{ actor?.name || 'Unknown Actor' }}</div>
+                <div class="actor-name" style="color: white !important;">{{ actor?.name || 'Unknown Actor' }}</div>
               </div>
             </div>
           </div>

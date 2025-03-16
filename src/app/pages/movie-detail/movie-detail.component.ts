@@ -8,7 +8,13 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTabsModule } from '@angular/material/tabs';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { catchError, finalize, of } from 'rxjs';
+import { take } from 'rxjs/operators';
+
+// Import the necessary services
+import { ReservationService } from '../../services/reservation.service';
+import { AuthService } from '../../services/auth.service';
 
 // Interfaces that match exactly the API response from the screenshot
 interface ApiActor {
@@ -99,6 +105,7 @@ interface Screening {
     MatChipsModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
     HttpClientModule
   ],
   templateUrl: './movie-detail.component.html',
@@ -115,7 +122,10 @@ export class MovieDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService,
+    private reservationService: ReservationService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -289,9 +299,50 @@ export class MovieDetailComponent implements OnInit {
   }
 
   addToCart(screening: Screening): void {
-    // Navigate to login if not logged in (in real app this would check auth state)
-    // For now, just show an alert
-    alert(`Added screening at ${screening.time} on ${this.formatDate(screening.date)} to cart`);
+    // Check if the user is logged in
+    this.authService.currentUser$.pipe(
+      take(1) // Take only the current value and then complete
+    ).subscribe(user => {
+      if (!user) {
+        // If not logged in, redirect to login
+        this.router.navigate(['/login'], {
+          queryParams: { returnUrl: this.router.url }
+        });
+        return;
+      }
+
+      // User is logged in, add to cart using the reservation service
+      this.reservationService.addToCart(screening.id).subscribe(
+        cart => {
+          if (cart) {
+            // Show success message with improved visibility
+            const message = `Added screening at ${screening.time} on ${this.formatDate(screening.date)} to cart`;
+
+            // Use MatSnackBar with custom styling for better readability
+            this.snackBar.open(message, 'View Cart', {
+              duration: 5000, // Longer duration for better visibility
+              panelClass: ['custom-snackbar'], // Add custom CSS class
+              verticalPosition: 'top',
+              horizontalPosition: 'center'
+            }).onAction().subscribe(() => {
+              this.router.navigate(['/cart']);
+            });
+          } else {
+            this.snackBar.open('Failed to add to cart. Please try again.', 'Close', {
+              duration: 3000,
+              panelClass: ['custom-snackbar-error']
+            });
+          }
+        },
+        error => {
+          console.error('Error adding to cart:', error);
+          this.snackBar.open('Failed to add to cart. Please try again.', 'Close', {
+            duration: 3000,
+            panelClass: ['custom-snackbar-error']
+          });
+        }
+      );
+    });
   }
 
   retry(): void {
