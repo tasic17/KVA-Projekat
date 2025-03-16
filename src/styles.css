@@ -173,7 +173,7 @@ button[mat-raised-button][color="primary"] {
 }
 
 button[mat-raised-button][color="accent"] {
-  background-color: #ff9800 !important;
+  background-color: darkslateblue !important;
 }
 
 /* Loading spinner */
