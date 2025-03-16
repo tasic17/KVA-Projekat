@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { Movie } from '../models/movie.model';
 import { Genre } from '../models/genre.model';
 import { Actor } from '../models/actor.model';
 import { Director } from '../models/director.model';
 
-// Interfaces for API models
+// Interfaces for API models - updated based on actual API response
 interface ApiGenre {
   genreId: number;
   name: string;
@@ -16,29 +16,39 @@ interface ApiGenre {
 interface ApiActor {
   actorId: number;
   name: string;
+  createdAt?: string;
 }
 
 interface ApiDirector {
   directorId: number;
   name: string;
+  createdAt?: string;
+}
+
+interface ApiMovieActor {
+  movieActorId: number;
+  movieId: number;
+  actorId: number;
+  actor: ApiActor;
 }
 
 interface ApiMovie {
   movieId: number;
+  internalId?: string;
+  corporateId?: string;
   title: string;
+  originalTitle?: string;
   description: string;
   shortDescription?: string;
+  poster: string;
   shortUrl: string;
   startDate: string;
-  poster: string;
   runTime: number;
+  createdAt?: string;
+  updatedAt?: string | null;
   director: ApiDirector;
-  movieActors: {
-    actor: ApiActor
-  }[];
-  movieGenres: {
-    genre: ApiGenre
-  }[];
+  movieActors: ApiMovieActor[];
+  movieGenres?: { genre: ApiGenre }[];
 }
 
 @Injectable({
@@ -68,6 +78,7 @@ export class ApiService {
 
     // Execute HTTP request to the API
     return this.http.get<ApiMovie[]>(url).pipe(
+      tap(response => console.log('API response for movies:', response)),
       map(movies => movies.map(movie => this.mapApiMovieToModel(movie))),
       catchError(error => {
         console.error('Error fetching movies:', error);
@@ -79,10 +90,8 @@ export class ApiService {
   getMovieById(id: number): Observable<Movie | null> {
     console.log(`Fetching movie with ID ${id} from API`);
     return this.http.get<ApiMovie>(`${this.baseUrl}/movie/${id}`).pipe(
-      map(movie => {
-        console.log('Raw API movie data:', movie);
-        return this.mapApiMovieToModel(movie);
-      }),
+      tap(response => console.log('API response for movie detail:', response)),
+      map(movie => this.mapApiMovieToModel(movie)),
       catchError(error => {
         console.error(`Error fetching movie with id ${id}:`, error);
         return of(null);
@@ -209,27 +218,34 @@ export class ApiService {
     return {
       id: apiMovie.movieId,
       title: apiMovie.title,
+      // Use original title as fallback if available
       description: apiMovie.description || '',
       shortUrl: apiMovie.shortUrl || '',
       releaseDate: apiMovie.startDate || '',
       coverUrl: apiMovie.poster || '',
       runtime: apiMovie.runTime || 0,
-      genres: apiMovie.movieGenres?.map((mg: { genre: ApiGenre }) => ({
-        id: mg.genre.genreId,
-        name: mg.genre.name
-      })) || [],
-      actors: apiMovie.movieActors?.map((ma: { actor: ApiActor }) => ({
-        id: ma.actor.actorId,
-        name: ma.actor.name,
-        biography: undefined,
-        imageUrl: undefined
-      })) || [],
-      directors: apiMovie.director ? [{
-        id: apiMovie.director.directorId,
-        name: apiMovie.director.name,
-        biography: undefined,
-        imageUrl: undefined
-      }] : []
+      genres: apiMovie.movieGenres
+        ? apiMovie.movieGenres.map(mg => ({
+          id: mg.genre.genreId,
+          name: mg.genre.name
+        }))
+        : [],
+      actors: apiMovie.movieActors
+        ? apiMovie.movieActors.map(ma => ({
+          id: ma.actor.actorId,
+          name: ma.actor.name,
+          biography: undefined,
+          imageUrl: undefined
+        }))
+        : [],
+      directors: apiMovie.director
+        ? [{
+          id: apiMovie.director.directorId,
+          name: apiMovie.director.name,
+          biography: undefined,
+          imageUrl: undefined
+        }]
+        : []
     };
   }
 }
