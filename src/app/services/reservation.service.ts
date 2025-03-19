@@ -1,4 +1,3 @@
-// src/app/services/reservation.service.ts
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Reservation } from '../models/reservation.model';
@@ -20,19 +19,16 @@ export class ReservationService {
   private reviewsSubject = new BehaviorSubject<Review[]>([]);
   reviews$ = this.reviewsSubject.asObservable();
 
-  // Cart is managed per user
   private cartMap = new Map<number, Cart>();
 
   constructor(
     private screeningService: ScreeningService,
     private authService: AuthService
   ) {
-    // Initialize with some sample data
     this.initializeData();
   }
 
   private initializeData(): void {
-    // Sample reviews
     this.reviews = [
       {
         id: 1,
@@ -55,7 +51,6 @@ export class ReservationService {
     ];
     this.reviewsSubject.next(this.reviews);
 
-    // Sample reservations for user 1
     this.reservations = [
       {
         id: 1,
@@ -76,7 +71,6 @@ export class ReservationService {
     ];
     this.reservationsSubject.next(this.reservations);
 
-    // Initialize cart for user 1
     this.cartMap.set(1, {
       userId: 1,
       reservations: [],
@@ -84,15 +78,12 @@ export class ReservationService {
     });
   }
 
-  // Reservation methods
   getUserReservations(userId: number): Observable<Reservation[]> {
     return this.reservations$.pipe(
       map(reservations => reservations.filter(r => r.userId === userId)),
       switchMap(reservations => {
-        // Fetch screening details for each reservation
         const reservationsWithScreenings: Reservation[] = [];
 
-        // Create an array of observables for each reservation
         const observables = reservations.map(reservation =>
           this.screeningService.getScreeningById(reservation.screeningId).pipe(
             map(screening => {
@@ -107,12 +98,10 @@ export class ReservationService {
           )
         );
 
-        // If there are no reservations, return empty array
         if (observables.length === 0) {
           return of([]);
         }
 
-        // Otherwise, combine all the observables
         return new Observable<Reservation[]>(observer => {
           let completedCount = 0;
 
@@ -143,7 +132,6 @@ export class ReservationService {
           return of(undefined);
         }
 
-        // Fetch screening details
         return this.screeningService.getScreeningById(reservation.screeningId).pipe(
           map(screening => {
             if (screening) {
@@ -187,11 +175,9 @@ export class ReservationService {
               screening
             };
 
-            // Add to reservations
             this.reservations.push(reservation);
             this.reservationsSubject.next([...this.reservations]);
 
-            // Update screening available seats
             const updatedScreening = {
               ...screening,
               availableSeats: screening.availableSeats - 1
@@ -223,7 +209,6 @@ export class ReservationService {
           return of(false);
         }
 
-        // Update reservation status
         const updatedReservation: Reservation = {
           ...reservation,
           status: 'canceled'
@@ -259,7 +244,6 @@ export class ReservationService {
           throw new Error('Cannot rate a reservation that is not in "watched" status');
         }
 
-        // Update reservation with rating
         const updatedReservation: Reservation = {
           ...reservation,
           rating,
@@ -271,24 +255,20 @@ export class ReservationService {
           this.reservations[index] = updatedReservation;
           this.reservationsSubject.next([...this.reservations]);
 
-          // Create a review if there is a screening and movie
           if (reservation.screening?.movie) {
             const movieId = reservation.screening.movie.id;
             const userId = reservation.userId;
 
-            // Check if user already has a review for this movie
             const existingReviewIndex = this.reviews.findIndex(
               r => r.movieId === movieId && r.userId === userId
             );
 
-            // Get user name
             this.authService.currentUser$.pipe(
               take(1)
             ).subscribe(user => {
               if (user) {
                 const userName = `${user.firstName} ${user.lastName}`;
 
-                // Create new review or update existing
                 const newReview: Review = {
                   id: existingReviewIndex !== -1 ? this.reviews[existingReviewIndex].id : this.reviews.length + 1,
                   movieId,
@@ -323,7 +303,6 @@ export class ReservationService {
           throw new Error('Cannot mark as watched a reservation that is not in "reserved" status');
         }
 
-        // Update reservation status
         const updatedReservation: Reservation = {
           ...reservation,
           status: 'watched'
@@ -340,7 +319,6 @@ export class ReservationService {
     );
   }
 
-  // Cart methods
   getUserCart(userId: number): Observable<Cart> {
     if (!this.cartMap.has(userId)) {
       this.cartMap.set(userId, {
@@ -352,7 +330,6 @@ export class ReservationService {
 
     const cart = this.cartMap.get(userId)!;
 
-    // Calculate total price based on screenings
     return new Observable<Cart>(observer => {
       if (cart.reservations.length === 0) {
         observer.next(cart);
@@ -412,7 +389,6 @@ export class ReservationService {
               return of(null); // No screening found or no seats available
             }
 
-            // Initialize cart if it doesn't exist
             if (!this.cartMap.has(user.id)) {
               this.cartMap.set(user.id, {
                 userId: user.id,
@@ -423,13 +399,11 @@ export class ReservationService {
 
             const cart = this.cartMap.get(user.id)!;
 
-            // Check if screening is already in cart
             const existingReservation = cart.reservations.find(r => r.screeningId === screeningId);
             if (existingReservation) {
               return of(cart); // Already in cart
             }
 
-            // Generate new reservation ID (temporary, until checkout)
             const newId = this.reservations.length > 0
               ? Math.max(...this.reservations.map(r => r.id)) + 1
               : 1;
@@ -443,7 +417,6 @@ export class ReservationService {
               screening
             };
 
-            // Add to cart
             const updatedReservations = [...cart.reservations, reservation];
             const updatedCart: Cart = {
               ...cart,
@@ -478,7 +451,6 @@ export class ReservationService {
         const reservation = cart.reservations[reservationIndex];
         const screeningPrice = reservation.screening?.price || 0;
 
-        // Remove from cart
         const updatedReservations = cart.reservations.filter(r => r.id !== reservationId);
         const updatedCart: Cart = {
           ...cart,
@@ -528,14 +500,11 @@ export class ReservationService {
           return of([]);
         }
 
-        // Process each reservation
         const reservationsToAdd: Reservation[] = [];
 
         cart.reservations.forEach(reservation => {
-          // The reservation is already prepared with proper ID, etc.
           reservationsToAdd.push(reservation);
 
-          // Update available seats if screening info is available
           if (reservation.screening) {
             const updatedScreening = {
               ...reservation.screening,
@@ -546,11 +515,9 @@ export class ReservationService {
           }
         });
 
-        // Add all reservations to the "database"
         this.reservations = [...this.reservations, ...reservationsToAdd];
         this.reservationsSubject.next(this.reservations);
 
-        // Clear the cart
         this.cartMap.set(user.id, {
           userId: user.id,
           reservations: [],
@@ -562,7 +529,6 @@ export class ReservationService {
     );
   }
 
-  // Review methods
   getMovieReviews(movieId: number): Observable<Review[]> {
     return this.reviews$.pipe(
       map(reviews => reviews.filter(r => r.movieId === movieId))

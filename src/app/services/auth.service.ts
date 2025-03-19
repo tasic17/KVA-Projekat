@@ -1,8 +1,6 @@
-// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { User } from '../models/user.model';
-import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

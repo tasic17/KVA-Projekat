@@ -12,11 +12,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { catchError, finalize, of } from 'rxjs';
 import { take } from 'rxjs/operators';
 
-// Import the necessary services
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 
-// Interfaces that match exactly the API response from the screenshot
 interface ApiActor {
   actorId: number;
   name: string;
@@ -55,7 +53,6 @@ interface ApiMovie {
   movieActors: ApiMovieActor[];
 }
 
-// Application model interfaces
 interface Genre {
   id: number;
   name: string;
@@ -136,7 +133,6 @@ export class MovieDetailComponent implements OnInit {
     this.loading = true;
     this.error = false;
 
-    // Get movie ID from route
     const rawId = this.route.snapshot.paramMap.get('id');
     this.movieId = rawId ? parseInt(rawId, 10) : 0;
 
@@ -147,7 +143,6 @@ export class MovieDetailComponent implements OnInit {
       return;
     }
 
-    // Fetch movie from API
     this.http.get<ApiMovie>(`https://movie.pequla.com/api/movie/${this.movieId}`)
       .pipe(
         catchError(error => {
@@ -168,7 +163,6 @@ export class MovieDetailComponent implements OnInit {
       });
   }
 
-  // Maps API movie to the application model
   mapApiMovieToModel(apiMovie: ApiMovie): void {
     this.movie = {
       id: apiMovie.movieId,
@@ -177,17 +171,14 @@ export class MovieDetailComponent implements OnInit {
       releaseDate: apiMovie.startDate || '',
       coverUrl: apiMovie.poster || '',
       runtime: apiMovie.runtime || 120,
-      // The API doesn't seem to have genres in the response, add some placeholder genres
       genres: [
         { id: 1, name: 'Action' },
         { id: 2, name: 'Thriller' }
       ],
-      // Map actors from the API response
       actors: apiMovie.movieActors ? apiMovie.movieActors.map(ma => ({
         id: ma.actor.actorId,
         name: ma.actor.name
       })) : [],
-      // Map directors from the API response
       directors: apiMovie.director ? [
         {
           id: apiMovie.director.directorId,

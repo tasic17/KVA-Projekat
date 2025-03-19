@@ -127,7 +127,6 @@ export class CartComponent implements OnInit {
     }
   }
 
-  // Helper methods for safely accessing nested properties
   getScreeningImage(reservation: Reservation): string {
     if (!reservation.screening || !reservation.screening.movie ||
       !reservation.screening.movie.coverUrl ||

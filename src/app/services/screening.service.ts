@@ -1,4 +1,3 @@
-// src/app/services/screening.service.ts
 import { Injectable } from '@angular/core';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { Screening } from '../models/screening.model';
@@ -13,13 +12,10 @@ export class ScreeningService {
   private screeningsSubject = new BehaviorSubject<Screening[]>([]);
   screenings$ = this.screeningsSubject.asObservable();
 
-  // Hall names for generating screenings
   private halls = ['Hall A', 'Hall B', 'Hall C', 'VIP Hall'];
 
-  // Time slots for screenings
   private timeSlots = ['10:00', '12:30', '15:00', '17:30', '20:00', '22:30'];
 
-  // Price ranges
   private priceTiers = {
     regular: 400,
     evening: 500,
@@ -28,23 +24,18 @@ export class ScreeningService {
   };
 
   constructor(private apiService: ApiService) {
-    // Initialize with data
     this.initializeScreenings();
   }
 
   private initializeScreenings(): void {
-    // Fetch movies from API and create screenings
     this.apiService.getMovies().pipe(
       tap(movies => {
-        // Create screenings for next 7 days
         const today = new Date();
         let screeningId = 1;
 
         this.screenings = [];
 
-        // Koristimo sve filmove koje dobijemo sa API-ja
         movies.forEach(movie => {
-          // Create 3-5 screenings per movie across different days and times
           const numScreenings = Math.floor(Math.random() * 3) + 3; // 3-5 screenings
 
           for (let i = 0; i < numScreenings; i++) {
@@ -141,7 +132,6 @@ export class ScreeningService {
   }
 
   updateScreening(screening: Screening): Observable<Screening> {
-    // Find and update screening in "database"
     const index = this.screenings.findIndex(s => s.id === screening.id);
     if (index !== -1) {
       this.screenings[index] = screening;
@@ -151,7 +141,6 @@ export class ScreeningService {
     return of(screening);
   }
 
-  // For admin functionality (not needed in the current project scope)
   addScreening(screening: Omit<Screening, 'id'>): Observable<Screening> {
     const newId = this.screenings.length > 0
       ? Math.max(...this.screenings.map(s => s.id)) + 1

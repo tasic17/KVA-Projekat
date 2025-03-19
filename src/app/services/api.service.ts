@@ -7,7 +7,6 @@ import { Genre } from '../models/genre.model';
 import { Actor } from '../models/actor.model';
 import { Director } from '../models/director.model';
 
-// Interfaces for API models - updated based on actual API response
 interface ApiGenre {
   genreId: number;
   name: string;
@@ -59,12 +58,11 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-  // Movie endpoints
   getMovies(search?: string, actor?: number, genre?: number, director?: number, runtime?: number): Observable<Movie[]> {
-    // Construct URL with parameters
+
     let url = `${this.baseUrl}/movie`;
 
-    // Add parameters to URL
+
     const params: string[] = [];
     if (search) params.push(`search=${search}`);
     if (actor) params.push(`actor=${actor}`);
@@ -76,7 +74,6 @@ export class ApiService {
       url += `?${params.join('&')}`;
     }
 
-    // Execute HTTP request to the API
     return this.http.get<ApiMovie[]>(url).pipe(
       tap(response => console.log('API response for movies:', response)),
       map(movies => movies.map(movie => this.mapApiMovieToModel(movie))),
@@ -108,7 +105,6 @@ export class ApiService {
     );
   }
 
-  // Genre endpoints
   getGenres(search?: string): Observable<Genre[]> {
     let url = `${this.baseUrl}/genre`;
     if (search) {
@@ -140,7 +136,6 @@ export class ApiService {
     );
   }
 
-  // Actor endpoints
   getActors(search?: string): Observable<Actor[]> {
     let url = `${this.baseUrl}/actor`;
     if (search) {
@@ -212,9 +207,7 @@ export class ApiService {
     );
   }
 
-  // Helper method that converts API movie model to application model
   private mapApiMovieToModel(apiMovie: ApiMovie): Movie {
-    // Ensure all properties are correctly mapped from API response to your application model
     return {
       id: apiMovie.movieId,
       title: apiMovie.title,

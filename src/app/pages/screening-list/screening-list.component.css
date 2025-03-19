@@ -93,7 +93,6 @@ mat-card-actions {
   margin-top: auto;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .filter-row {
     flex-direction: column;

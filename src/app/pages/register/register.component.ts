@@ -14,7 +14,6 @@ import { AuthService } from '../../services/auth.service';
 import { ApiService } from '../../services/api.service';
 import { Genre } from '../../models/genre.model';
 
-// Custom validator for password match
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password');
   const confirmPassword = control.get('confirmPassword');
@@ -72,12 +71,10 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Redirect to home if already logged in
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/']);
     }
 
-    // Load genres for the favorite genres select
     this.apiService.getGenres().subscribe(
       genres => {
         this.genres = genres;
@@ -96,7 +93,6 @@ export class RegisterComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Extract user data from form
     const {
       firstName,
       lastName,
@@ -108,7 +104,6 @@ export class RegisterComponent implements OnInit {
       password
     } = this.registerForm.value;
 
-    // Create user object
     const user = {
       firstName,
       lastName,
@@ -125,7 +120,6 @@ export class RegisterComponent implements OnInit {
         this.isLoading = false;
 
         if (registeredUser) {
-          // Navigate to home page after successful registration
           this.router.navigate(['/']);
         } else {
           this.errorMessage = 'Registration failed. Please try again.';

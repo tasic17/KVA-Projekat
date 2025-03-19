@@ -16,7 +16,6 @@ import { ApiService } from '../../services/api.service';
 import { User } from '../../models/user.model';
 import { Genre } from '../../models/genre.model';
 
-// Custom validator for password match
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const newPassword = control.get('newPassword');
   const confirmPassword = control.get('confirmPassword');
@@ -82,13 +81,11 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.currentUser;
 
-    // Load genres for the favorite genres select
     this.apiService.getGenres().subscribe(
       genres => {
         this.genres = genres;
         this.loading = false;
 
-        // Initialize form with user data
         if (this.currentUser) {
           this.initializeForm();
         }
@@ -128,7 +125,6 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // Extract form values
     const {
       firstName,
       lastName,
@@ -140,9 +136,8 @@ export class ProfileComponent implements OnInit {
       newPassword
     } = this.profileForm.value;
 
-    // Check if password change is requested
+
     if (currentPassword && newPassword) {
-      // In a real app, this would verify the current password with the backend
       if (currentPassword !== this.currentUser.password) {
         this.errorMessage = 'Current password is incorrect';
         this.isLoading = false;
@@ -150,7 +145,7 @@ export class ProfileComponent implements OnInit {
       }
     }
 
-    // Create updated user object
+
     const updatedUser: User = {
       ...this.currentUser,
       firstName,
@@ -161,7 +156,7 @@ export class ProfileComponent implements OnInit {
       favoriteGenres: favoriteGenres || []
     };
 
-    // Update password if provided
+
     if (newPassword) {
       updatedUser.password = newPassword;
     }
@@ -170,8 +165,6 @@ export class ProfileComponent implements OnInit {
       user => {
         this.isLoading = false;
         this.successMessage = 'Profile updated successfully';
-
-        // Reset password fields
         this.profileForm.patchValue({
           currentPassword: '',
           newPassword: '',

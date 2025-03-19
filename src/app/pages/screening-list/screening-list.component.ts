@@ -46,17 +46,14 @@ import { Genre } from '../../models/genre.model';
   styleUrls: ['./screening-list.component.css']
 })
 export class ScreeningListComponent implements OnInit {
-  // Screenings data
   allScreenings: Screening[] = [];
   filteredScreenings: Screening[] = [];
   movies: Movie[] = [];
 
-  // Filter state
   selectedDate: Date | null = null;
   selectedMovieId: number | null = null;
   priceRange: string | null = null;
 
-  // UI state
   loading = true;
   isLoggedIn = false;
 
@@ -69,12 +66,10 @@ export class ScreeningListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Check login status
     this.authService.currentUser$.subscribe(user => {
       this.isLoggedIn = !!user;
     });
 
-    // Load movies for filter
     this.apiService.getMovies().subscribe(
       movies => {
         this.movies = movies;
@@ -84,7 +79,6 @@ export class ScreeningListComponent implements OnInit {
       }
     );
 
-    // Load all screenings
     this.loadScreenings();
   }
 
@@ -110,7 +104,6 @@ export class ScreeningListComponent implements OnInit {
   applyFilters(): void {
     this.loading = true;
 
-    // Convert filters to appropriate format
     const dateFilter = this.selectedDate ?
       this.selectedDate.toISOString().split('T')[0] : undefined;
 
@@ -126,7 +119,6 @@ export class ScreeningListComponent implements OnInit {
       minPrice = 550;
     }
 
-    // Apply filters through service
     this.screeningService.getScreenings(
       dateFilter,
       this.selectedMovieId || undefined,
@@ -161,7 +153,6 @@ export class ScreeningListComponent implements OnInit {
     });
   }
 
-  // Helper methods for images and nested properties
   getScreeningMovieCoverUrl(screening: Screening): string {
     if (screening.movie?.coverUrl &&
       screening.movie.coverUrl.trim() !== '' &&
@@ -204,7 +195,6 @@ export class ScreeningListComponent implements OnInit {
 
   addToCart(screening: Screening): void {
     if (!this.isLoggedIn) {
-      // Redirect to login if user is not logged in
       this.router.navigate(['/login'], {
         queryParams: { returnUrl: this.router.url }
       });
@@ -214,7 +204,6 @@ export class ScreeningListComponent implements OnInit {
     this.reservationService.addToCart(screening.id).subscribe(
       cart => {
         if (cart) {
-          // Show success message
           alert('Added to cart successfully!');
         } else {
           alert('Failed to add to cart. Please try again.');

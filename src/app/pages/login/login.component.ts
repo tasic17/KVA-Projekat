@@ -48,10 +48,8 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Get return URL from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
-    // Redirect to home if already logged in
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/']);
     }
@@ -72,7 +70,6 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
 
         if (user) {
-          // Navigate to return URL or home
           this.router.navigateByUrl(this.returnUrl);
         } else {
           this.errorMessage = 'Invalid username or password';

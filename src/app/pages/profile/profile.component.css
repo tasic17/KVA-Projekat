@@ -69,7 +69,6 @@ mat-spinner {
   margin-right: 8px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .form-row {
     flex-direction: column;

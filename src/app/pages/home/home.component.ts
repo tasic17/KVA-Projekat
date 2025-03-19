@@ -33,9 +33,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.apiService.getMovies().subscribe(
       movies => {
-        // Get up to 4 random movies for featured section
         if (movies.length > 0) {
-          // Shuffle the array
           const shuffled = [...movies].sort(() => 0.5 - Math.random());
           this.featuredMovies = shuffled.slice(0, 4);
         }
@@ -48,7 +46,6 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  // Helper methods for template
   getMovieCoverUrl(movie: Movie): string {
     if (movie.coverUrl && movie.coverUrl.trim() !== '' &&
       movie.coverUrl.startsWith('http')) {
