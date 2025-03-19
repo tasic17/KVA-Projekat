@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -39,6 +39,7 @@ export class MyReservationsComponent implements OnInit {
   canceledReservations: Reservation[] = [];
 
   loading = true;
+  countdownSeconds = 15; // Countdown time in seconds
 
   constructor(
     private reservationService: ReservationService,
@@ -49,6 +50,48 @@ export class MyReservationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadReservations();
+
+    // Set exactly 15 seconds timer
+    this.countdownSeconds = 15;
+
+    // Start the countdown timer for UI only
+    const countdownInterval = setInterval(() => {
+      this.countdownSeconds--;
+      if (this.countdownSeconds <= 0) {
+        clearInterval(countdownInterval);
+      }
+    }, 1000); // Update every second
+
+    // Set a fixed 15-second timeout for the actual state change
+    setTimeout(() => {
+      this.autoMarkAsWatched();
+    }, 15000); // Exactly 15 seconds
+  }
+
+  autoMarkAsWatched(): void {
+    if (this.upcomingReservations.length === 0) return;
+
+    // Create a copy of the upcoming reservations to iterate through
+    const reservationsToUpdate = [...this.upcomingReservations];
+
+    reservationsToUpdate.forEach(reservation => {
+      this.reservationService.markAsWatched(reservation.id).subscribe(
+        (updatedReservation) => {
+          console.log(`Reservation #${reservation.id} automatically marked as watched`);
+          this.loadReservations(); // Reload all reservations to update the UI
+
+          // Show notification
+          this.snackBar.open(`Your reservation for "${reservation.screening?.movie?.title}" has been marked as watched!`, 'Rate Now', {
+            duration: 5000
+          }).onAction().subscribe(() => {
+            this.openRatingDialog(updatedReservation);
+          });
+        },
+        (error) => {
+          console.error('Error marking reservation as watched:', error);
+        }
+      );
+    });
   }
 
   loadReservations(): void {
@@ -60,9 +103,24 @@ export class MyReservationsComponent implements OnInit {
         (reservations) => {
           this.reservations = reservations;
 
-          // Filter reservations by status
-          this.upcomingReservations = reservations.filter(r => r.status === 'reserved');
-          this.watchedReservations = reservations.filter(r => r.status === 'watched');
+          // Filter reservations by status and sort by date
+          this.upcomingReservations = reservations
+            .filter(r => r.status === 'reserved')
+            .sort((a, b) => {
+              const dateA = a.screening?.date ? new Date(a.screening.date + 'T' + a.screening.time) : new Date();
+              const dateB = b.screening?.date ? new Date(b.screening.date + 'T' + b.screening.time) : new Date();
+              return dateA.getTime() - dateB.getTime();
+            });
+
+          this.watchedReservations = reservations
+            .filter(r => r.status === 'watched')
+            .sort((a, b) => {
+              // Sort by date, most recent first
+              const dateA = a.screening?.date ? new Date(a.screening.date) : new Date();
+              const dateB = b.screening?.date ? new Date(b.screening.date) : new Date();
+              return dateB.getTime() - dateA.getTime();
+            });
+
           this.canceledReservations = reservations.filter(r => r.status === 'canceled');
 
           this.loading = false;
